@@ -1,5 +1,7 @@
 package com.template.service;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,10 +32,14 @@ public class FormTemplateService {
 	
 	@Transactional
     public ResponseEntity<String> saveFormTemplate(FormTemplateDTO formTemplateDTO) {
-		
-        // Fetch the user by ID
-        User user = userRepository.findByUserName(formTemplateDTO.getUserName())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid userName"));
+        // Fetch the user by userName
+        Optional<User> optionalUserName = userRepository.findByUserName(formTemplateDTO.getUserName());
+        
+        if (optionalUserName.isEmpty()) {
+            return new ResponseEntity<>("Invalid userName: " + formTemplateDTO.getUserName(), HttpStatus.BAD_REQUEST);
+        }
+        
+        User user_name = optionalUserName.get();
 
         // Validate required fields
         if (formTemplateDTO.getFormName() == null || formTemplateDTO.getFormName().isEmpty()) {
@@ -51,7 +57,7 @@ public class FormTemplateService {
         formTemplate.setFormName(formTemplateDTO.getFormName());
         formTemplate.setCreatedAt(formTemplateDTO.getCreatedAt());
         formTemplate.setFields(formTemplateDTO.getFields());
-        formTemplate.setUser(user);
+        formTemplate.setUser(user_name);
 
         // Save the form template
         formTemplateRepository.save(formTemplate);
