@@ -26,13 +26,12 @@ public class UserController {
 	public ResponseEntity<String> saveUser(@RequestBody User user ) {
 		
 		try {
-			userService.saveUserInfo(user.getUserName(),user.getEmail());
+			return userService.saveUserInfo(user);
 		}
 		catch(Exception e) {
 			System.out.println("user not save");
 		}
-		
-		return  ResponseEntity.ok("data saved");
+		return  ResponseEntity.ok().body("data saved");
 
 	}
 	
