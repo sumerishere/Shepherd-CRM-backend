@@ -1,12 +1,15 @@
 package com.template.service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.template.BcryptPasswordEncoder.BcryptEncoderConfig;
 import com.template.model.FormTemplate;
 import com.template.model.FormTemplateDTO;
 import com.template.model.User;
@@ -28,6 +31,13 @@ public class FormTemplateService {
 	
 	@Autowired
 	CommentRepository commentRepository;
+	
+	@Autowired
+	private final BcryptEncoderConfig passwordEncoder;     //imported password encoder to store real password as hashed value in DB.
+	
+	public FormTemplateService(BcryptEncoderConfig passwordEncoder) {
+		this.passwordEncoder = passwordEncoder;
+	}
 	
 	
 	@Transactional
@@ -63,6 +73,53 @@ public class FormTemplateService {
         formTemplateRepository.save(formTemplate);
         return new ResponseEntity<>("Form template saved successfully", HttpStatus.CREATED);
     }
+	
+	
+    @Transactional
+    public ResponseEntity<?> getAllUserTemplate(String userName, String password) {
+    	
+        Optional<User> userCheck = userRepository.findByUserName(userName);
+
+        if (userCheck.isPresent() && passwordEncoder.matches(password, userCheck.get().getPassword())) {
+        	
+            List<FormTemplateDTO> templateDTOs = formTemplateRepository.findAllByUser(userCheck.get()).stream()
+                    .map(this::convertToDTO)
+                    .collect(Collectors.toList());
+            
+            return new ResponseEntity<>(templateDTOs, HttpStatus.OK);
+        } 
+        else {
+            return new ResponseEntity<>("Invalid username or password", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    private FormTemplateDTO convertToDTO(FormTemplate formTemplate) {
+        FormTemplateDTO dto = new FormTemplateDTO();
+        dto.setFormName(formTemplate.getFormName());
+        dto.setCreatedAt(formTemplate.getCreatedAt());
+        dto.setFields(formTemplate.getFields());
+        dto.setUserName(formTemplate.getUser().getUserName());
+        return dto;
+    }
+	
+    
+    
+    //----- get all user info with relationships --------//
+    
+	//	@Transactional
+	//    public ResponseEntity<?> getAllUserTemplate(String userName, String password) {
+	//	 
+	//        Optional<User> userCheck = userRepository.findByUserName(userName);
+	//        
+	//        if (userCheck.isPresent() && passwordEncoder.matches(password, userCheck.get().getPassword())) {
+	//        	
+	//            List<FormTemplate> templates = formTemplateRepository.findAllByUser(userCheck.get());
+	//            return new ResponseEntity<>(templates, HttpStatus.OK);
+	//        } 
+	//        else {
+	//            return new ResponseEntity<>("Invalid username or password", HttpStatus.BAD_REQUEST);
+	//        }
+	//    }
 	
 
 

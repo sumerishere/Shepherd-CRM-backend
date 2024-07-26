@@ -28,26 +28,8 @@ public class CommentController {
     
     
     
-//    @PostMapping("save-comment")
-//    public ResponseEntity<Comment> saveComment(@RequestBody CommentRequest commentRequest) {
-//    	
-//        // Retrieve the user from the UserService based on provided username
-//        User user = userService.findByUsername(commentRequest.getUsername());
-//        
-//        if (user == null) {
-//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // User not found
-//        }
-//
-//        // Create Comment object
-//        Comment comment = new Comment();
-//        comment.setComment(commentRequest.getComment());
-//        comment.setUser(user);
-//
-//        // Save Comment
-//        Comment savedComment = commentService.saveComment(comment);
-//        return new ResponseEntity<>(savedComment, HttpStatus.CREATED);
-//    }
-//    
+    
+    
 
     @DeleteMapping("/delete-comment/{id}")
     public ResponseEntity<Void> deleteComment(@PathVariable Long id) {
