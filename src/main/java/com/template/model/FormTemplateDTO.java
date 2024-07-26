@@ -5,18 +5,30 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 
 public class FormTemplateDTO {
-
+	
+	private Long id;
     private String formName;
     private LocalDateTime createdAt;
     private JsonNode fields;
     private String userName; // UserName
 
     // Getters and Setters
+    
+    
+    
     public String getFormName() {
         return formName;
     }
 
-    public void setFormName(String formName) {
+    public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public void setFormName(String formName) {
         this.formName = formName;
     }
 

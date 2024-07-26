@@ -83,8 +83,7 @@ public class FormTemplateService {
         if (userCheck.isPresent() && passwordEncoder.matches(password, userCheck.get().getPassword())) {
         	
             List<FormTemplateDTO> templateDTOs = formTemplateRepository.findAllByUser(userCheck.get()).stream()
-                    .map(this::convertToDTO)
-                    .collect(Collectors.toList());
+                    .map(this::convertToDTO).collect(Collectors.toList());
             
             return new ResponseEntity<>(templateDTOs, HttpStatus.OK);
         } 
@@ -94,11 +93,14 @@ public class FormTemplateService {
     }
 
     private FormTemplateDTO convertToDTO(FormTemplate formTemplate) {
+    	
         FormTemplateDTO dto = new FormTemplateDTO();
+        dto.setId(formTemplate.getId());
         dto.setFormName(formTemplate.getFormName());
         dto.setCreatedAt(formTemplate.getCreatedAt());
         dto.setFields(formTemplate.getFields());
         dto.setUserName(formTemplate.getUser().getUserName());
+        
         return dto;
     }
 	
