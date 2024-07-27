@@ -1,6 +1,10 @@
 package com.template.service;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -9,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.template.BcryptPasswordEncoder.BcryptEncoderConfig;
 import com.template.model.FormTemplate;
 import com.template.model.FormTemplateDTO;
@@ -16,6 +21,8 @@ import com.template.model.User;
 import com.template.repository.CommentRepository;
 import com.template.repository.FormTemplateRepository;
 import com.template.repository.UserRepository;
+import java.sql.Statement;
+import java.util.Iterator;
 
 import jakarta.transaction.Transactional;
 
@@ -71,9 +78,87 @@ public class FormTemplateService {
 
         // Save the form template
         formTemplateRepository.save(formTemplate);
+        
+        createDynamicTable(formTemplateDTO);
+        
         return new ResponseEntity<>("Form template saved successfully", HttpStatus.CREATED);
     }
 	
+	
+	//--------  dynamic table creation ---------//
+	
+	
+	private void createDynamicTable(FormTemplateDTO formTemplateDTO) {
+		
+	    JsonNode fields = formTemplateDTO.getFields();
+	    
+	    StringBuilder createTableQuery = new StringBuilder();
+	    
+	    // Ensure table name is properly formatted
+	    String tableName = formTemplateDTO.getFormName().replaceAll("\\s+", "_");
+	    
+	    createTableQuery.append("CREATE TABLE `").append(tableName).append("` (");
+
+	    Iterator<Map.Entry<String, JsonNode>> fieldsIterator = fields.fields();
+	    
+	    while (fieldsIterator.hasNext()) {
+	    	
+	        Map.Entry<String, JsonNode> field = fieldsIterator.next();
+	        
+	        String fieldName = field.getKey();
+	        String fieldType = mapFieldType(field.getValue().asText());
+	        
+	        createTableQuery.append("`").append(fieldName).append("` ").append(fieldType);
+	        
+	        if (fieldsIterator.hasNext()) {
+	            createTableQuery.append(", ");
+	        }
+	    }
+	        createTableQuery.append(")");
+
+	        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/templategen", "root", "root");
+	        		
+	            Statement statement = connection.createStatement()) {
+	            statement.executeUpdate(createTableQuery.toString());
+	        } 
+	        catch (Exception e) {
+	            e.printStackTrace();
+	            // Handle exceptions properly in a real-world application
+	        }
+	    }
+
+	    private String mapFieldType(String jsonType) {
+	    	
+	        switch (jsonType) {
+	        
+	            case "Text(String)":
+	                return "VARCHAR(255)";
+	                
+	            case "Number(int)":
+	                return "INT";
+	                
+	            case "Yes/No button(Radio)":
+	                
+	            	return "VARCHAR(3)";
+	            	
+	            case "Image":
+	            	return "LONGBLOB";
+	            	
+	            case "Pdf File":
+	            	return "LONGBLOB";
+	            	
+	            	//Add more mappings as needed
+	            	
+	            default:
+	            	
+	                throw new IllegalArgumentException("Unsupported field type: " + jsonType);
+	        }
+	    }
+	
+	
+	
+	
+	//-----------------------------------------------------------------------------------------//
 	
     @Transactional
     public ResponseEntity<?> getAllUserTemplate(String userName, String password) {
