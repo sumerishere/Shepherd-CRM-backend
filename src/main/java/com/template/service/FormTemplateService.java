@@ -85,7 +85,7 @@ public class FormTemplateService {
     }
 	
 	
-	//--------  dynamic table creation ---------//
+	//--------  dynamic table creation Logic ---------//
 	
 	
 	private void createDynamicTable(FormTemplateDTO formTemplateDTO) {
@@ -98,6 +98,7 @@ public class FormTemplateService {
 	    String tableName = formTemplateDTO.getFormName().replaceAll("\\s+", "_");
 	    
 	    createTableQuery.append("CREATE TABLE `").append(tableName).append("` (");
+	    createTableQuery.append("`id` INT AUTO_INCREMENT PRIMARY KEY, ");
 
 	    Iterator<Map.Entry<String, JsonNode>> fieldsIterator = fields.fields();
 	    
@@ -116,7 +117,7 @@ public class FormTemplateService {
 	    }
 	        createTableQuery.append(")");
 
-	        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/templategen", "root", "root");
+	        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/template_created_db", "root", "root");
 	        		
 	            Statement statement = connection.createStatement()) {
 	            statement.executeUpdate(createTableQuery.toString());
@@ -159,6 +160,7 @@ public class FormTemplateService {
 	
 	
 	//-----------------------------------------------------------------------------------------//
+	    
 	
     @Transactional
     public ResponseEntity<?> getAllUserTemplate(String userName, String password) {
