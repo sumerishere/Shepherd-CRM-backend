@@ -39,6 +39,8 @@ public class FormTemplate {
     @Column(columnDefinition = "json", nullable = false)
     private JsonNode fields;
     
+    private String password;
+    
     
     @ManyToOne
     @JoinColumn(name = "user_name", referencedColumnName = "user_name", nullable = false)

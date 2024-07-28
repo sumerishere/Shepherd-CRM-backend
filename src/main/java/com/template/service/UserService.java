@@ -78,6 +78,35 @@ public class UserService {
 	            return new ResponseEntity<>("Error saving user: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 	        }
 	    }
+	
+	
+	
+	
+	public ResponseEntity<?> Login(String userName, String password){
+		
+		Optional<User>  user = userRepository.findByUserName(userName);
+		
+		try {
+			User userObject = user.get();
+			
+			if(user.isPresent()) {
+				
+				if(passwordEncoder.matches(password, userObject.getPassword())) {
+					return new ResponseEntity<>(userObject, HttpStatus.OK);
+				}
+				else {
+					return new ResponseEntity<>("password incorrect!!" ,HttpStatus.NOT_FOUND );
+				}
+			}
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return new ResponseEntity<>("incorrect!! username" ,HttpStatus.NOT_FOUND );
+	}
 	  
 
+	
+	
 }

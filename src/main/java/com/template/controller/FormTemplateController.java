@@ -40,5 +40,14 @@ public class FormTemplateController {
 	public ResponseEntity<?> getAllTemplate(@RequestParam("userName") String userName, @RequestParam("password") String password){
 		return formTemplateService.getAllUserTemplate(userName, password);
 	}
+	
+	//---- get template by username ----//
+	
+	@GetMapping("/get-template-username")
+	public ResponseEntity<?> getTemplateByUsername(@RequestParam("userName") String userName){
+		return formTemplateService.getTemplateByUsername(userName);
+	}
+	
+	
 		
 }

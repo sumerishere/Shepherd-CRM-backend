@@ -8,9 +8,10 @@ public class FormTemplateDTO {
 	
 	private Long id;
     private String formName;
-    private LocalDateTime createdAt;
-    private JsonNode fields;
-    private String userName; // UserName
+    private LocalDateTime createdAt; 	//Time
+    private JsonNode fields;        	// JSON Object
+    private String userName;   			// get UserName
+  
 
     // Getters and Setters
     
@@ -55,4 +56,6 @@ public class FormTemplateDTO {
     public void setUserName(String userName) {
         this.userName = userName;
     }
+    
+    
 }

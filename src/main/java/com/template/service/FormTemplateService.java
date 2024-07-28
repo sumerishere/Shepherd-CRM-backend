@@ -50,13 +50,18 @@ public class FormTemplateService {
 	@Transactional
     public ResponseEntity<String> saveFormTemplate(FormTemplateDTO formTemplateDTO) {
         // Fetch the user by userName
-        Optional<User> optionalUserName = userRepository.findByUserName(formTemplateDTO.getUserName());
+        Optional<User> optionalUserObject = userRepository.findByUserName(formTemplateDTO.getUserName());
         
-        if (optionalUserName.isEmpty()) {
+        
+        if (optionalUserObject.isEmpty()) {
             return new ResponseEntity<>("Invalid userName: " + formTemplateDTO.getUserName(), HttpStatus.BAD_REQUEST);
         }
         
-        User user_name = optionalUserName.get();
+        User user = optionalUserObject.get();
+        
+        // Fetch the password using the native query
+        String userPassword = userRepository.findPasswordByUserName(formTemplateDTO.getUserName());
+        
 
         // Validate required fields
         if (formTemplateDTO.getFormName() == null || formTemplateDTO.getFormName().isEmpty()) {
@@ -68,13 +73,20 @@ public class FormTemplateService {
         if (formTemplateDTO.getFields() == null || formTemplateDTO.getFields().isEmpty()) {
             return new ResponseEntity<>("Fields are required", HttpStatus.BAD_REQUEST);
         }
+        
+        // Check if the username already exists in FormTemplateRepository
+        List<FormTemplate> existingTemplates = formTemplateRepository.findAllByUser(user);
+        if (!existingTemplates.isEmpty()) {
+            return new ResponseEntity<>("User already has a form template", HttpStatus.CONFLICT);
+        }
 
         // Create FormTemplate entity
         FormTemplate formTemplate = new FormTemplate();
         formTemplate.setFormName(formTemplateDTO.getFormName());
         formTemplate.setCreatedAt(formTemplateDTO.getCreatedAt());
         formTemplate.setFields(formTemplateDTO.getFields());
-        formTemplate.setUser(user_name);
+        formTemplate.setUser(user);
+        formTemplate.setPassword(userPassword); // Set the user's password
 
         // Save the form template
         formTemplateRepository.save(formTemplate);
@@ -191,6 +203,25 @@ public class FormTemplateService {
         return dto;
     }
 	
+    
+    
+    public ResponseEntity<?> getTemplateByUsername(String userName ){
+    	
+    	Optional<User> OptionalUserObject = userRepository.findByUserName(userName);
+    	try {
+    		if(OptionalUserObject.isPresent() ) {
+    			User  user = OptionalUserObject.get();
+    			
+    			List<FormTemplate> templateObject =  formTemplateRepository.findAllByUser(user);
+    			
+    			return new ResponseEntity<>(templateObject, HttpStatus.OK);
+    		}
+    	}
+    	catch( Exception e ){
+    		e.printStackTrace();
+    	}
+    	return new ResponseEntity<>("user not found",HttpStatus.BAD_REQUEST);
+    }
     
     
     //----- get all user info with relationships --------//
