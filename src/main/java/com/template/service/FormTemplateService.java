@@ -154,6 +154,10 @@ public class FormTemplateService {
 	                
 	            	return "VARCHAR(3)";
 	            	
+	            case "Yes/No check(checkbox)":
+	                
+	            	return "VARCHAR(3)";	
+	            	
 	            case "Image":
 	            	return "LONGBLOB";
 	            	

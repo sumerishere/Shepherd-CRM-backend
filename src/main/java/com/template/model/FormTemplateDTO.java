@@ -10,12 +10,10 @@ public class FormTemplateDTO {
     private String formName;
     private LocalDateTime createdAt; 	//Time
     private JsonNode fields;        	// JSON Object
-    private String userName;   			// get UserName
+    private String userName;   		
   
 
     // Getters and Setters
-    
-    
     
     public String getFormName() {
         return formName;
