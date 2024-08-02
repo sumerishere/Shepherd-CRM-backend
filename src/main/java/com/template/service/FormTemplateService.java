@@ -50,57 +50,57 @@ public class FormTemplateService {
 	
 	
 	
-	 @Transactional
-	    public ResponseEntity<String> saveFormTemplate(FormTemplateDTO formTemplateDTO) {
-	        // Fetch the user by userName
-	        Optional<User> optionalUserObject = userRepository.findByUserName(formTemplateDTO.getUserName());
+	@Transactional
+    public ResponseEntity<String> saveFormTemplate(FormTemplateDTO formTemplateDTO) {
+        // Fetch the user by userName
+        Optional<User> optionalUserObject = userRepository.findByUserName(formTemplateDTO.getUserName());
 
-	        if (optionalUserObject.isEmpty()) {
-	            return new ResponseEntity<>("Invalid userName: " + formTemplateDTO.getUserName(), HttpStatus.BAD_REQUEST);
-	        }
+        if (optionalUserObject.isEmpty()) {
+            return new ResponseEntity<>("Invalid userName: " + formTemplateDTO.getUserName(), HttpStatus.BAD_REQUEST);
+        }
 
-	        User user = optionalUserObject.get();
+        User user = optionalUserObject.get();
 
-	        // Fetch the password using the native query
-	        String userPassword = userRepository.findPasswordByUserName(formTemplateDTO.getUserName());
+        // Fetch the password using the native query
+        String userPassword = userRepository.findPasswordByUserName(formTemplateDTO.getUserName());
 
-	        // Validate required fields
-	        if (formTemplateDTO.getFormName() == null || formTemplateDTO.getFormName().isEmpty()) {
-	            return new ResponseEntity<>("Form name is required", HttpStatus.BAD_REQUEST);
-	        }
-	        if (formTemplateDTO.getCreatedAt() == null) {
-	            return new ResponseEntity<>("Creation date is required", HttpStatus.BAD_REQUEST);
-	        }
-	        if (formTemplateDTO.getFields() == null || formTemplateDTO.getFields().isEmpty()) {
-	            return new ResponseEntity<>("Fields are required", HttpStatus.BAD_REQUEST);
-	        }
+        // Validate required fields
+        if (formTemplateDTO.getFormName() == null || formTemplateDTO.getFormName().isEmpty()) {
+            return new ResponseEntity<>("Form name is required", HttpStatus.BAD_REQUEST);
+        }
+        if (formTemplateDTO.getCreatedAt() == null) {
+            return new ResponseEntity<>("Creation date is required", HttpStatus.BAD_REQUEST);
+        }
+        if (formTemplateDTO.getFields() == null || formTemplateDTO.getFields().isEmpty()) {
+            return new ResponseEntity<>("Fields are required", HttpStatus.BAD_REQUEST);
+        }
 
-	        // Check if the user already has a form template
-	        List<FormTemplate> existingTemplates = formTemplateRepository.findAllByUser(user);
-	        if (!existingTemplates.isEmpty()) {
-	            return new ResponseEntity<>("User already has a template form", HttpStatus.CONFLICT);
-	        }
+        // Check if the user already has a form template
+        List<FormTemplate> existingTemplates = formTemplateRepository.findAllByUser(user);
+        if (!existingTemplates.isEmpty()) {
+            return new ResponseEntity<>("User already has a template form", HttpStatus.CONFLICT);
+        }
 
-	        // Create FormTemplate entity
-	        FormTemplate formTemplate = new FormTemplate();
-	        formTemplate.setFormName(formTemplateDTO.getFormName());
-	        formTemplate.setCreatedAt(formTemplateDTO.getCreatedAt());
-	        formTemplate.setFields(convertListToJsonNode(formTemplateDTO.getFields())); // Convert List<FieldDTO> to JsonNode
-	        formTemplate.setUser(user);
-	        formTemplate.setPassword(userPassword); // Set the user's password
+        // Create FormTemplate entity
+        FormTemplate formTemplate = new FormTemplate();
+        formTemplate.setFormName(formTemplateDTO.getFormName());
+        formTemplate.setCreatedAt(formTemplateDTO.getCreatedAt());
+        formTemplate.setFields(convertListToJsonNode(formTemplateDTO.getFields())); // Convert List<FieldDTO> to JsonNode
+        formTemplate.setUser(user);
+        formTemplate.setPassword(userPassword); // Set the user's password
 
-	        // Save the form template
-	        formTemplateRepository.save(formTemplate);
+        // Save the form template
+        formTemplateRepository.save(formTemplate);
 
-	        // You can add additional logic here if needed
+        // You can add additional logic here if needed
 
-	        return new ResponseEntity<>("Form template saved successfully", HttpStatus.CREATED);
-	    }
+        return new ResponseEntity<>("Form template saved successfully", HttpStatus.CREATED);
+    }
 
-	    private JsonNode convertListToJsonNode(List<FormTemplateDTO.FieldDTO> fieldDTOList) {
-	        ObjectMapper mapper = new ObjectMapper();
-	        return mapper.valueToTree(fieldDTOList);
-	    }
+    private JsonNode convertListToJsonNode(List<FormTemplateDTO.FieldDTO> fieldDTOList) {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.valueToTree(fieldDTOList);
+    }
 
 
 

@@ -28,6 +28,12 @@ public class DataTable {
     @Convert(converter = JsonNodeConverter.class)
     @Column(columnDefinition = "json", nullable = false)
     private JsonNode Fields_Data;
+    
+//    @Column(name = "image", columnDefinition = "LONGBLOB")
+//    private byte[] image;
+//
+//    @Column(name = "pdf_files", columnDefinition = "LONGBLOB")
+//    private byte[] pdfFiles;
 
     @ManyToOne
     @JoinColumn(name = "template_id", referencedColumnName = "id", nullable = false)
@@ -50,4 +56,22 @@ public class DataTable {
     public void setFormTemplate(FormTemplate formTemplate) {
         this.formTemplate = formTemplate;
     }
+    
+    // Getter and Setter for Image
+//    public byte[] getImage() {
+//        return image;
+//    }
+//
+//    public void setImage(byte[] image) {
+//        this.image = image;
+//    }
+//
+//    // Getter and Setter for PdfFiles
+//    public byte[] getPdfFiles() {
+//        return pdfFiles;
+//    }
+//
+//    public void setPdfFiles(byte[] pdfFiles) {
+//        this.pdfFiles = pdfFiles;
+//    }
 }

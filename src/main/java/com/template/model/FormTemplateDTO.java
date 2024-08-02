@@ -59,16 +59,24 @@ public class FormTemplateDTO {
     
     // Convert JsonNode to List<FieldDTO>
     private List<FieldDTO> convertJsonToList(JsonNode jsonNode) {
+    	
         List<FieldDTO> fieldList = new ArrayList<>();
+        
         if (jsonNode != null && jsonNode.isObject()) {
+        	
             Iterator<Map.Entry<String, JsonNode>> fieldsIterator = jsonNode.fields();
+            
             long fieldId = 1; // Use long for consistency
+            
             while (fieldsIterator.hasNext()) {
+            	
                 Map.Entry<String, JsonNode> fieldEntry = fieldsIterator.next();
+                
                 String columnName = fieldEntry.getKey();
                 String dataType = fieldEntry.getValue().asText();
 
                 FieldDTO fieldDTO = new FieldDTO();
+                
                 fieldDTO.setColumnName(columnName);
                 fieldDTO.setDataType(dataType);
                 fieldDTO.setFieldId(fieldId++); // Ensure fieldId is of type Long
