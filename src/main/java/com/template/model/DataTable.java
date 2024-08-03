@@ -57,21 +57,4 @@ public class DataTable {
         this.formTemplate = formTemplate;
     }
     
-    // Getter and Setter for Image
-//    public byte[] getImage() {
-//        return image;
-//    }
-//
-//    public void setImage(byte[] image) {
-//        this.image = image;
-//    }
-//
-//    // Getter and Setter for PdfFiles
-//    public byte[] getPdfFiles() {
-//        return pdfFiles;
-//    }
-//
-//    public void setPdfFiles(byte[] pdfFiles) {
-//        this.pdfFiles = pdfFiles;
-//    }
 }

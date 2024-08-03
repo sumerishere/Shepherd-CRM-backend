@@ -13,6 +13,8 @@ import com.template.model.User;
 public interface FormTemplateRepository extends JpaRepository<FormTemplate, Long> {
 	
 	List<FormTemplate> findAllByUser(User user);
+	
+	public Optional<FormTemplate> findById(Long id);
 
 
 }
