@@ -79,7 +79,7 @@ public class FormTemplateDTO {
                 
                 fieldDTO.setColumnName(columnName);
                 fieldDTO.setDataType(dataType);
-                fieldDTO.setFieldId(fieldId++); // Ensure fieldId is of type Long
+                fieldDTO.setFieldId(fieldId++); 
                 
                 fieldList.add(fieldDTO);
             }

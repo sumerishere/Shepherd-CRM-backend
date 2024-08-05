@@ -86,8 +86,6 @@ public class DataTableService {
 	    }
 	}
 
-	
-
 
 	
 	// get template data with the data of datatable 
@@ -113,6 +111,29 @@ public class DataTableService {
 	}
 	
 	
+	//---delete added user by uid ----//
+	
+	public ResponseEntity<?> deleteUserByDataTableId(Long UID){
+		
+		Optional<DataTable> checkIdOptional = dataTableRepository.findById(UID);
+		
+		if(checkIdOptional.isPresent()) {
+		
+			try {
+				
+				dataTableRepository.deleteById(UID);
+				return new ResponseEntity<> ("User with 'uid : "+UID+"' Deleted Successfully!!", HttpStatus.OK);
+				
+			}
+			catch(Exception e) {
+				e.printStackTrace();
+				return new ResponseEntity<> ("User ID not found!!", HttpStatus.NOT_FOUND);
+			}
+		}
+		else{
+			return new ResponseEntity<>("Error occurred while deleting user!", HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 
 
 
