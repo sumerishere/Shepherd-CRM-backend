@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.template.formDataDTO.FormDataRequest;
+import com.template.formDataDTO.UpdateDataTableDTO;
+import com.template.model.DataTable;
 import com.template.repository.DataTableRepository;
 import com.template.service.DataTableService;
 
@@ -36,15 +38,21 @@ public class DataTableController {
     }
 
 	
+	
 	@GetMapping("/get-template-data/{templateId}")
 	public ResponseEntity<?> getTemplateData(@PathVariable("templateId") Long formtemplateId){
+		
 		 return dataTableService.getTemplateData(formtemplateId);
 	}
+	
 	    
-	@PutMapping("/update-user-info")
-	public ResponseEntity<?> UpdateUserInfo(){
-		return null;
-	}
+	
+	@PutMapping("/update-user")
+    public ResponseEntity<?> updateDataTable(@RequestBody UpdateDataTableDTO updateDataTableDTO) {
+		return dataTableService.UpdateUserInfo(updateDataTableDTO);
+    }
+	
+	
 	
 	@DeleteMapping("/delete-by-uid/{UID}")
 	public ResponseEntity<?> deleteUserByDataTableId(@PathVariable("UID") Long UID){

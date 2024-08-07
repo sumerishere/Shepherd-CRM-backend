@@ -11,11 +11,12 @@ import com.template.BcryptPasswordEncoder.BcryptEncoderConfig;
 import com.template.model.User;
 import com.template.repository.CommentRepository;
 import com.template.repository.UserRepository;
+import com.template.validationConstant.ValidationConstant;
 
 import jakarta.transaction.Transactional;
 
 @Service
-public class UserService {
+public class UserService implements ValidationConstant{
 	
 	@Autowired
 	UserRepository userRepository;
@@ -37,6 +38,14 @@ public class UserService {
 		  
         try {
         	
+        	if(!user.getFullName().matches(NAME_isVALID) || user.getFullName() == null || user.getFullName().isEmpty()) {
+        		return new ResponseEntity<>("Valid Name is required!!", HttpStatus.BAD_REQUEST);
+        	}
+        	
+        	if(!user.getAddress().matches(ADDRESS_isVALID) || user.getAddress() == null || user.getAddress().isEmpty()) {
+        		return new ResponseEntity<>("Valid address name is required!!", HttpStatus.BAD_REQUEST);
+        	}
+        	
             // Validate required fields
             if (user.getUserName() == null || user.getUserName().isEmpty()) {
                 return new ResponseEntity<>("Username is required", HttpStatus.BAD_REQUEST);
@@ -49,17 +58,20 @@ public class UserService {
 	           }
             
 	            
-            if (user.getMobileNumber() == null || user.getMobileNumber().isEmpty()) {
-                return new ResponseEntity<>("Mobile number is required", HttpStatus.BAD_REQUEST);
+            if (!user.getMobileNumber().matches(MOBILE_NUMBER_PATTERN) || user.getMobileNumber().isEmpty()) {
+                return new ResponseEntity<>("Valid Mobile number is required!!", HttpStatus.BAD_REQUEST);
             }
-            if (user.getEmail() == null || user.getEmail().isEmpty()) {
-                return new ResponseEntity<>("Email is required", HttpStatus.BAD_REQUEST);
+            
+            if (!user.getEmail().matches(EMAIL_PATTERN) || user.getEmail().isEmpty()) {
+                return new ResponseEntity<>("Valid Email is required!!", HttpStatus.BAD_REQUEST);
             }
+            
             if (user.getPassword() == null || user.getPassword().isEmpty()) {
-                return new ResponseEntity<>("Password is required", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("Password is required!!", HttpStatus.BAD_REQUEST);
             }
+            
             if (user.getAddress() == null || user.getAddress().isEmpty()) {
-                return new ResponseEntity<>("Address is required", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("Address is required!!", HttpStatus.BAD_REQUEST);
             }
 
             // Encode the password

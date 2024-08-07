@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.template.formDataDTO.FormDataRequest;
+import com.template.formDataDTO.UpdateDataTableDTO;
 import com.template.model.DataTable;
 import com.template.model.FormTemplate;
 import com.template.repository.DataTableRepository;
@@ -34,6 +35,9 @@ public class DataTableService {
 	@Autowired
 	FormFieldDataRepository formFieldDataRepository;
 	
+	
+	
+	//------------------------ Save user information ( POST )-------------------------//
 	
 	@Transactional
 	public ResponseEntity<?> saveFormData(FormDataRequest formDataRequest) {
@@ -85,10 +89,15 @@ public class DataTableService {
 	        return new ResponseEntity<>("Bad request", HttpStatus.BAD_REQUEST);
 	    }
 	}
+	
+	//------------------------------------------------------------------------------------------//
+	
 
 
 	
-	// get template data with the data of datatable 
+	
+	
+	//--------------------- get template data with the data of datatable ( GET )------------------------------
 	
 	public ResponseEntity<?> getTemplateData(Long formtemplateId){
 		
@@ -110,8 +119,48 @@ public class DataTableService {
 		return new ResponseEntity<> ("Opps..! Template id not found", HttpStatus.BAD_REQUEST);
 	}
 	
+	//-----------------------------------------------------------------------//
 	
-	//---delete added user by uid ----//
+	
+	
+	
+	
+	
+    //-------------------------Update user entry (PUT/UPDATE)------------------------------------//
+	
+	public ResponseEntity<?> UpdateUserInfo(UpdateDataTableDTO updateDataTableDTO) {
+		
+        Optional<DataTable> optionalDataTable = dataTableRepository.findById(updateDataTableDTO.getUid());
+
+        try {
+			if (optionalDataTable.isPresent()) {
+				
+			    DataTable dataTable = optionalDataTable.get();
+			    dataTable.setFieldsData(updateDataTableDTO.getFieldsData());
+			    
+			    dataTableRepository.save(dataTable);
+			    return new ResponseEntity<>("user info update successfully!!", HttpStatus.OK);
+			} 
+			else {
+			    throw new RuntimeException("DataTable with UID " + updateDataTableDTO.getUid() + " not found");
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return new ResponseEntity<>("An error occurred while updating the DataTable", HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+        
+    }
+	
+	
+	
+	//------------------------------------------------------------------------------------------//
+	
+	
+	
+	
+	
+    //-------------------------delete added user by uid ( DELETE )------------------------------------//
 	
 	public ResponseEntity<?> deleteUserByDataTableId(Long UID){
 		
@@ -134,7 +183,8 @@ public class DataTableService {
 			return new ResponseEntity<>("Error occurred while deleting user!", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-
+	
+  //------------------------------------------------------------------------------------------//
 
 
 
