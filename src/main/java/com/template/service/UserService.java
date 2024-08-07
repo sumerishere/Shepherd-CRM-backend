@@ -33,6 +33,8 @@ public class UserService implements ValidationConstant{
 	}
 	
 	
+	//--------------------------------------- user registration ( POST ) --------------------------------------------//
+	
 	@Transactional
 	public ResponseEntity<String> saveUserInfo(User user) {
 		  
@@ -88,11 +90,14 @@ public class UserService implements ValidationConstant{
 	        	
 	            // Handle the exception as needed
 	            return new ResponseEntity<>("Error saving user: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+	            
 	        }
 	    }
+	//------------------------------------------------------------------------------------------//
 	
 	
 	
+	//--------------------------- user Login (GET) --------------------------------//
 	
 	public ResponseEntity<?> Login(String userName, String password){
 		
@@ -117,7 +122,8 @@ public class UserService implements ValidationConstant{
 		
 		return new ResponseEntity<>("incorrect!! username" ,HttpStatus.NOT_FOUND );
 	}
-	  
+	
+	//------------------------------------------------------------------------------------------//
 
 	
 	

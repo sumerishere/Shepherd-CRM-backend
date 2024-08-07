@@ -97,7 +97,7 @@ public class DataTableService {
 	
 	
 	
-	//--------------------- get template data with the data of datatable ( GET )------------------------------
+	//--------------------- get template data with the data of datatable ( GET )------------------------------//
 	
 	public ResponseEntity<?> getTemplateData(Long formtemplateId){
 		
@@ -125,10 +125,42 @@ public class DataTableService {
 	
 	
 	
+	//------------------------ get particular user-info by uid ------------------------------//
+	
+	public ResponseEntity<?> getUserByUID(Long uid){
+		
+		Optional<DataTable> checkUser = dataTableRepository.findById(uid);
+		
+		try {
+			
+			if(checkUser.isPresent()) {
+				
+				JsonNode userdata = checkUser.get().getFields_Data();
+				
+				return new ResponseEntity<> (userdata,HttpStatus.OK);
+			}
+		} 
+		catch (Exception e) {
+			e.printStackTrace();
+			// TODO: handle exception
+		}
+		
+		return new ResponseEntity<> ("Opps..! user uid not found", HttpStatus.BAD_REQUEST);
+	}
+	
+	
+	//------------------------------------------------------------------------------------------//
+	
+	
+	
 	
     //-------------------------Update user entry (PUT/UPDATE)------------------------------------//
 	
 	public ResponseEntity<?> UpdateUserInfo(UpdateDataTableDTO updateDataTableDTO) {
+		
+		if (updateDataTableDTO.getUid() == null) {
+	            return new ResponseEntity<>("UID must not be null", HttpStatus.BAD_REQUEST);
+	    }
 		
         Optional<DataTable> optionalDataTable = dataTableRepository.findById(updateDataTableDTO.getUid());
 
@@ -144,7 +176,8 @@ public class DataTableService {
 			else {
 			    throw new RuntimeException("DataTable with UID " + updateDataTableDTO.getUid() + " not found");
 			}
-		} catch (Exception e) {
+		} 
+        catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return new ResponseEntity<>("An error occurred while updating the DataTable", HttpStatus.INTERNAL_SERVER_ERROR);

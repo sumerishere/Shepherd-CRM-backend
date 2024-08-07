@@ -1,7 +1,5 @@
 package com.template.controller;
 
-import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.template.formDataDTO.FormDataRequest;
@@ -31,13 +30,11 @@ public class DataTableController {
 	DataTableRepository dataTableRepository;
 	 
 	
-	
 	@PostMapping("/submit-form-data")
     public ResponseEntity<?> submitFormData(@RequestBody FormDataRequest formDataRequest) {
         return dataTableService.saveFormData(formDataRequest);
     }
 
-	
 	
 	@GetMapping("/get-template-data/{templateId}")
 	public ResponseEntity<?> getTemplateData(@PathVariable("templateId") Long formtemplateId){
@@ -45,13 +42,16 @@ public class DataTableController {
 		 return dataTableService.getTemplateData(formtemplateId);
 	}
 	
-	    
+	@GetMapping("/get-user-by-uid/{uid}")
+	public ResponseEntity<?> getUserByUID(@PathVariable("uid") Long uid){
+		return dataTableService.getUserByUID(uid);
+	}
 	
+	    
 	@PutMapping("/update-user")
     public ResponseEntity<?> updateDataTable(@RequestBody UpdateDataTableDTO updateDataTableDTO) {
 		return dataTableService.UpdateUserInfo(updateDataTableDTO);
     }
-	
 	
 	
 	@DeleteMapping("/delete-by-uid/{UID}")
