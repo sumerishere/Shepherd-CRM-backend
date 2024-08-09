@@ -7,6 +7,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 public class FormDataRequest {
     private Long formTemplateId;
     private JsonNode formData;
+    
+//    private byte[] image;      // Add this field
+//    private byte[] pdfFiles;   // Add this field
 
     // Getters and Setters
 
@@ -25,5 +28,21 @@ public class FormDataRequest {
     public void setFormData(JsonNode formData) {
         this.formData = formData;
     }
+    
+//    public byte[] getImage() {
+//        return image;
+//    }
+//
+//    public void setImage(byte[] image) {
+//        this.image = image;
+//    }
+//
+//    public byte[] getPdfFiles() {
+//        return pdfFiles;
+//    }
+//
+//    public void setPdfFiles(byte[] pdfFiles) {
+//        this.pdfFiles = pdfFiles;
+//    }
 }
 

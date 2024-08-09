@@ -36,7 +36,7 @@ public class UserService implements ValidationConstant{
 	//--------------------------------------- user registration ( POST ) --------------------------------------------//
 	
 	@Transactional
-	public ResponseEntity<String> saveUserInfo(User user) {
+	public ResponseEntity<?> saveUserInfo(User user) {
 		  
         try {
         	
@@ -55,9 +55,16 @@ public class UserService implements ValidationConstant{
             
 	           // Check if username already exists
 	           if (userRepository.findByUserName(user.getUserName()).isPresent()) {
-	        	   
-	               return new ResponseEntity<>("Username is already present", HttpStatus.BAD_REQUEST);
+	               return new ResponseEntity<>("Username is already!! present, try another username", HttpStatus.BAD_REQUEST);
 	           }
+	           
+	            String userName = user.getUserName();   //check username validation.
+		   		char firstChar = userName.charAt(0);
+		   		
+		   		// Check if the first character is valid letter.
+		   		if (Character.isDigit(firstChar)) {
+		   			return new ResponseEntity<>("Username must start with english letter.", HttpStatus.BAD_REQUEST);
+		   		}
             
 	            
             if (!user.getMobileNumber().matches(MOBILE_NUMBER_PATTERN) || user.getMobileNumber().isEmpty()) {

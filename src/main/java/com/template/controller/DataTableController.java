@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.template.formDataDTO.FormDataRequest;
 import com.template.formDataDTO.UpdateDataTableDTO;
@@ -30,11 +32,23 @@ public class DataTableController {
 	DataTableRepository dataTableRepository;
 	 
 	
+//	@PostMapping("/submit-form-data")
+//    public ResponseEntity<?> submitFormData(@RequestBody FormDataRequest formDataRequest) {
+//        return dataTableService.saveFormData(formDataRequest);
+//    }
+//	
+	
 	@PostMapping("/submit-form-data")
-    public ResponseEntity<?> submitFormData(@RequestBody FormDataRequest formDataRequest) {
-        return dataTableService.saveFormData(formDataRequest);
-    }
+	public ResponseEntity<?> submitFormData(
+	        @RequestPart("formDataRequest") FormDataRequest formDataRequest,
+	        @RequestPart(value = "image", required = false) MultipartFile image,
+	        @RequestPart(value = "pdfFiles", required = false) MultipartFile pdfFiles) {
 
+	    return dataTableService.saveFormData(formDataRequest, image, pdfFiles);
+	}
+
+	
+	
 	
 	@GetMapping("/get-template-data/{templateId}")
 	public ResponseEntity<?> getTemplateData(@PathVariable("templateId") Long formtemplateId){

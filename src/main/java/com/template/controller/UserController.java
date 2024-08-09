@@ -25,15 +25,9 @@ public class UserController {
 	
 	
 	@PostMapping("/save-user-info")
-	public ResponseEntity<String> saveUser(@RequestBody User user ) {
-		
-		try {
-			return userService.saveUserInfo(user);
-		}
-		catch(Exception e) {
-			System.out.println("user not save");
-		}
-		return  ResponseEntity.ok().body("data saved");
+	public ResponseEntity<?> saveUser(@RequestBody User user ) {
+		return userService.saveUserInfo(user);
+
 	}
 	
 	

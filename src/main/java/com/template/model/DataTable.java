@@ -29,11 +29,11 @@ public class DataTable {
     @Column(columnDefinition = "json", nullable = false)
     private JsonNode Fields_Data;
     
-//    @Column(name = "image", columnDefinition = "LONGBLOB")
-//    private byte[] image;
-//
-//    @Column(name = "pdf_files", columnDefinition = "LONGBLOB")
-//    private byte[] pdfFiles;
+    @Column(name = "image", columnDefinition = "LONGBLOB")
+    private byte[] image;
+
+    @Column(name = "pdf_files", columnDefinition = "LONGBLOB")
+    private byte[] pdfFiles;
 
     @ManyToOne
     @JoinColumn(name = "template_id", referencedColumnName = "id", nullable = false)
