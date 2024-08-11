@@ -46,8 +46,4 @@ public class FormTemplate {
     @JoinColumn(name = "user_name", referencedColumnName = "user_name", nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "formTemplate", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Comment> comments;
-
-
 }

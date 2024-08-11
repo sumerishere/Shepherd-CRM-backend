@@ -43,7 +43,4 @@ public class User {
     
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<FormTemplate> formTemplates;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Comment> comments;
 }

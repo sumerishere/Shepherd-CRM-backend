@@ -193,7 +193,7 @@ public class DataTableService implements ValidationConstant {
 	
 	
 	
-	//------------------------ get particular user-info by uid ------------------------------//
+	//------------------------ get particular user-info by uid (GET API) ------------------------------//
 	
 	public ResponseEntity<?> getUserByUID(Long uid){
 		
