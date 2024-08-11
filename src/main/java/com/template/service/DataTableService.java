@@ -42,8 +42,11 @@ public class DataTableService implements ValidationConstant {
 	
 	//------------------------ Save user information ( POST )-------------------------//
 	
+	
+	
 	@Transactional
-	public ResponseEntity<?> saveFormData(FormDataRequest formDataRequest, MultipartFile image, MultipartFile pdfFiles) {
+	public ResponseEntity<?> saveFormData(FormDataRequest formDataRequest) {
+		
 	    Long formTemplateId = formDataRequest.getFormTemplateId();
 	    JsonNode formData = formDataRequest.getFormData();
 
@@ -54,8 +57,9 @@ public class DataTableService implements ValidationConstant {
 
 	        // Extract expected column names from the formTemplate fields
 	        JsonNode fields = formTemplate.getFields();
+	        
 	        Set<String> expectedColumnNames = new HashSet<>();
-
+	        
 	        if (fields.isArray()) {
 	            for (JsonNode field : fields) {
 	                String columnName = field.get("columnName").asText();
@@ -65,8 +69,11 @@ public class DataTableService implements ValidationConstant {
 
 	        // Validate the formData keys
 	        Iterator<String> fieldNames = formData.fieldNames();
+	        
 	        while (fieldNames.hasNext()) {
+	        	
 	            String fieldName = fieldNames.next().toLowerCase();
+	            
 	            if (!expectedColumnNames.contains(fieldName)) {
 	                return new ResponseEntity<>("Invalid field: " + fieldName, HttpStatus.BAD_REQUEST);
 	            }
@@ -74,35 +81,26 @@ public class DataTableService implements ValidationConstant {
 
 	        // All keys are valid, proceed to save data
 	        DataTable dataTable = new DataTable();
+	        
 	        dataTable.setFormTemplate(formTemplate);
 	        dataTable.setFieldsData(formData);
-
-	        // Handle image and pdfFiles
-	        if (image != null && !image.isEmpty()) {
-	            dataTable.setImage(image.getBytes());
-	        }
-
-	        if (pdfFiles != null && !pdfFiles.isEmpty()) {
-	            dataTable.setPdfFiles(pdfFiles.getBytes());
-	        }
-
+	        
 	        dataTableRepository.save(dataTable);
 
 	        return new ResponseEntity<>("Data saved successfully!", HttpStatus.OK);
-	    } catch (Exception e) {
+	    } 
+	    catch (Exception e) {
 	        e.printStackTrace();
 	        return new ResponseEntity<>("Bad request", HttpStatus.BAD_REQUEST);
 	    }
 	}
-
-
 	
 	
+	//--------image and pdf pending --------//
 	
 	
 //	@Transactional
-//	public ResponseEntity<?> saveFormData(FormDataRequest formDataRequest) {
-//		
+//	public ResponseEntity<?> saveFormData(FormDataRequest formDataRequest, MultipartFile image, MultipartFile pdfFiles) {
 //	    Long formTemplateId = formDataRequest.getFormTemplateId();
 //	    JsonNode formData = formDataRequest.getFormData();
 //
@@ -113,9 +111,8 @@ public class DataTableService implements ValidationConstant {
 //
 //	        // Extract expected column names from the formTemplate fields
 //	        JsonNode fields = formTemplate.getFields();
-//	        
 //	        Set<String> expectedColumnNames = new HashSet<>();
-//	        
+//
 //	        if (fields.isArray()) {
 //	            for (JsonNode field : fields) {
 //	                String columnName = field.get("columnName").asText();
@@ -125,11 +122,8 @@ public class DataTableService implements ValidationConstant {
 //
 //	        // Validate the formData keys
 //	        Iterator<String> fieldNames = formData.fieldNames();
-//	        
 //	        while (fieldNames.hasNext()) {
-//	        	
 //	            String fieldName = fieldNames.next().toLowerCase();
-//	            
 //	            if (!expectedColumnNames.contains(fieldName)) {
 //	                return new ResponseEntity<>("Invalid field: " + fieldName, HttpStatus.BAD_REQUEST);
 //	            }
@@ -137,19 +131,32 @@ public class DataTableService implements ValidationConstant {
 //
 //	        // All keys are valid, proceed to save data
 //	        DataTable dataTable = new DataTable();
-//	        
 //	        dataTable.setFormTemplate(formTemplate);
 //	        dataTable.setFieldsData(formData);
-//	        
+//
+//	        // Handle image and pdfFiles
+//	        if (image != null && !image.isEmpty()) {
+//	            System.out.println("Image file received: " + image.getOriginalFilename());
+//	            dataTable.setImage(image.getBytes());
+//	        }
+//
+//	        if (pdfFiles != null && !pdfFiles.isEmpty()) {
+//	            System.out.println("PDF file received: " + pdfFiles.getOriginalFilename());
+//	            dataTable.setPdfFiles(pdfFiles.getBytes());
+//	        }
+//
+//
 //	        dataTableRepository.save(dataTable);
 //
 //	        return new ResponseEntity<>("Data saved successfully!", HttpStatus.OK);
-//	    } 
-//	    catch (Exception e) {
+//	    } catch (Exception e) {
 //	        e.printStackTrace();
 //	        return new ResponseEntity<>("Bad request", HttpStatus.BAD_REQUEST);
 //	    }
 //	}
+
+	
+	
 	
 	//------------------------------------------------------------------------------------------//
 	

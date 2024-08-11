@@ -32,20 +32,20 @@ public class DataTableController {
 	DataTableRepository dataTableRepository;
 	 
 	
-//	@PostMapping("/submit-form-data")
-//    public ResponseEntity<?> submitFormData(@RequestBody FormDataRequest formDataRequest) {
-//        return dataTableService.saveFormData(formDataRequest);
-//    }
-//	
-	
 	@PostMapping("/submit-form-data")
-	public ResponseEntity<?> submitFormData(
-	        @RequestPart("formDataRequest") FormDataRequest formDataRequest,
-	        @RequestPart(value = "image", required = false) MultipartFile image,
-	        @RequestPart(value = "pdfFiles", required = false) MultipartFile pdfFiles) {
-
-	    return dataTableService.saveFormData(formDataRequest, image, pdfFiles);
-	}
+    public ResponseEntity<?> submitFormData(@RequestBody FormDataRequest formDataRequest) {
+        return dataTableService.saveFormData(formDataRequest);
+    }
+	
+	
+//	@PostMapping("/submit-form-data")
+//	public ResponseEntity<?> submitFormData(
+//	        @RequestPart("formDataRequest") FormDataRequest formDataRequest,
+//	        @RequestPart(value = "image", required = false) MultipartFile image,
+//	        @RequestPart(value = "pdfFiles", required = false) MultipartFile pdfFiles) {
+//
+//	    return dataTableService.saveFormData(formDataRequest, image, pdfFiles);
+//	}
 
 	
 	
