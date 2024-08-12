@@ -2,6 +2,8 @@ package com.template.model;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -32,6 +34,7 @@ public class Comment {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lead_uid", referencedColumnName = "uid", nullable = false)
+    @JsonBackReference
     private LeadFollowUp leadFollowUp;
 
     @Column(name = "lead_name")

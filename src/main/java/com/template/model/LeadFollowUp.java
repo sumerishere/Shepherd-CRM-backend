@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.template.customIdGenerator.CustomIdGenerator;
 
 import jakarta.persistence.CascadeType;
@@ -33,6 +34,7 @@ public class LeadFollowUp {
 	private LocalDateTime createdAt;
 	
 	@OneToMany(mappedBy = "leadFollowUp", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonBackReference
 	private List<Comment> comments = new ArrayList<>();
 	
 	
