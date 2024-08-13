@@ -6,7 +6,8 @@ import java.util.List;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+//import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.template.customIdGenerator.CustomIdGenerator;
 
 import jakarta.persistence.CascadeType;
@@ -34,7 +35,7 @@ public class LeadFollowUp {
 	private LocalDateTime createdAt;
 	
 	@OneToMany(mappedBy = "leadFollowUp", cascade = CascadeType.ALL, orphanRemoval = true)
-	@JsonBackReference
+	@JsonManagedReference  //tell jackson to perform serialization mechanism on this entity and skip child serialization to avoid stackoverflow error and infinite recursion error.
 	private List<Comment> comments = new ArrayList<>();
 	
 	

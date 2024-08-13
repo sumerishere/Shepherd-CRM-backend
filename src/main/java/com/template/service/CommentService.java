@@ -1,53 +1,49 @@
 package com.template.service;
 
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.template.model.Comment;
-//import com.template.model.DeletedComment;
 import com.template.repository.CommentRepository;
-//import com.template.repository.DeletedCommentRepository;
-
-import java.sql.Timestamp;
-import java.util.Optional;
 
 @Service
 public class CommentService {
 
     @Autowired
-    private CommentRepository commentRepository;
-
-//    @Autowired
-//    private DeletedCommentRepository deletedCommentRepository;
+    CommentRepository commentRepository;
     
     
     
-    public Comment saveComment(Comment comment) {
-        return commentRepository.save(comment);
-    }
     
-
-    public void deleteComment(Long commentId) {
+    //----------------------------get lead comments with uid ( GET API )--------------------------------//
+    public ResponseEntity<?> getComments(Long uid){
     	
-        Optional<Comment> comment = commentRepository.findById(commentId);
-        
-        if (comment.isPresent()) {
-            // Convert Comment to DeletedComment
-            Comment existingComment = comment.get();
-            
-//            DeletedComment deletedComment = new DeletedComment();
-//            
-//            deletedComment.setComment(existingComment.getComment());
-//            deletedComment.setUser(existingComment.getUser());
-//            
-//            deletedComment.setDeletedAt(new Timestamp(System.currentTimeMillis()));
-
-            // Save DeletedComment
-//            deletedCommentRepository.save(deletedComment);
-
-            // Delete the Comment
-            commentRepository.delete(existingComment);
-        }
+    	List<Comment> checkLead = commentRepository.findByUid(uid);
+    	
+    	try {
+    		
+			if(!checkLead.isEmpty()) {
+				List<Comment>  comments = commentRepository.findByUid(uid);
+				return new ResponseEntity<>(comments, HttpStatus.OK);
+			}
+			else {
+				return new ResponseEntity<>("lead with Id:"+uid+" not found", HttpStatus.NOT_FOUND);
+			}
+		} 
+    	catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<>("internal server error!!!", HttpStatus.INTERNAL_SERVER_ERROR);
+		}
     }
+    
+    //------------------------------------------------------------------------------------------------------//
+
+    
+    
 }

@@ -1,6 +1,7 @@
 package com.template.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,6 +14,8 @@ import com.template.model.Comment;
 import com.template.model.LeadFollowUp;
 import com.template.repository.CommentRepository;
 import com.template.repository.LeadFollowUpRepository;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class LeadFollowUpService {
@@ -95,7 +98,6 @@ public class LeadFollowUpService {
 	//--------------------------- Update lead info (PUT/UPDATE API) -----------------------------//
 	
 	public ResponseEntity<?> updateLead(Long uid, LeadFollowUp updatedLeadFollowUp, List<String> newComments) {
-		
 	    try {
 	        // Fetch the existing LeadFollowUp entity by UID
 	        LeadFollowUp leadFollowUp = leadFollowUpRepository.findById(uid)
@@ -109,27 +111,90 @@ public class LeadFollowUpService {
 
 	        // Save the updated lead information
 	        leadFollowUp = leadFollowUpRepository.save(leadFollowUp);
-	        
-	        // Store new comments
+
+	        // Fetch existing comments
+	        List<Comment> existingComments = commentRepository.findByLeadFollowUp(leadFollowUp);
+
+	        // Create a list for storing all comments, including new ones
+	        List<Comment> commentObjects = new ArrayList<>(existingComments);
+
+	        // Process new comments
 	        for (String commentText : newComments) {
-	        	
-	            Comment comment = new Comment();  // Create a new Comment object for each comment
+	            Comment comment = new Comment();
 	            comment.setComment(commentText);
 	            comment.setCreatedAt(LocalDateTime.now());
-	            comment.setLeadFollowUp(leadFollowUp); // Associate the comment with the lead
-	            
-	            commentRepository.save(comment); // Save the newly created Comment
+	            comment.setLeadFollowUp(leadFollowUp);
+	            commentObjects.add(comment);
 	        }
 
-	        // Return a success response with the updated lead
+	        // Validate and save all comments
+	        for (Comment comment : commentObjects) {
+	            int commentLength = 151; // Consider comment length limit
+	            if (comment.getComment().length() <= commentLength) {
+	                commentRepository.save(comment);
+	            } else {
+	                return new ResponseEntity<>("Comment length should be under the range (1-151)", HttpStatus.BAD_REQUEST);
+	            }
+	        }
+
+	        // Return a success response
 	        return new ResponseEntity<>("Lead updated successfully", HttpStatus.OK);
 
 	    } catch (Exception e) {
 	        // Handle exceptions and return an error response
-	        return new ResponseEntity<>("Error updating lead: " + e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
-	               
+	        return new ResponseEntity<>("Error updating lead: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
+
+
+	
+	
+	
+	
+//	public ResponseEntity<?> updateLead(Long uid, LeadFollowUp updatedLeadFollowUp, List<String> newComments) {
+//		
+//	    try {
+//	        // Fetch the existing LeadFollowUp entity by UID
+//	        LeadFollowUp leadFollowUp = leadFollowUpRepository.findById(uid)
+//	                .orElseThrow(() -> new RuntimeException("Lead not found with UID: " + uid));
+//
+//	        // Update the lead's information
+//	        leadFollowUp.setName(updatedLeadFollowUp.getName());
+//	        leadFollowUp.setEmail(updatedLeadFollowUp.getEmail());
+//	        leadFollowUp.setMobileNumber(updatedLeadFollowUp.getMobileNumber());
+//	        leadFollowUp.setAddress(updatedLeadFollowUp.getAddress());
+//
+//	        // Save the updated lead information
+//	        leadFollowUp = leadFollowUpRepository.save(leadFollowUp);
+//	        
+//	        // Store new comments
+//	        for (String commentText : newComments) {
+//	        	
+//	        	int commentLength = 151;  //consider comment length limit.
+//	            Comment comment = new Comment();  // Create a new Comment object for each comment
+//	            
+//	            if(commentText.length() < commentLength) {
+//	            	comment.setComment(commentText);
+//		            comment.setCreatedAt(LocalDateTime.now());
+//		            comment.setLeadFollowUp(leadFollowUp); // Associate the comment with the lead
+//		            
+//		            commentRepository.save(comment); // Save the newly created Comment
+//	            }
+//	            else {
+//	            	return new ResponseEntity<>("Comment length should be under the range(1-151)", HttpStatus.BAD_REQUEST);
+//	            }
+//	            
+//	        }
+//
+//	        // Return a success response with the updated lead
+//	        return new ResponseEntity<>("Lead updated successfully", HttpStatus.OK);
+//
+//	    } catch (Exception e) {
+//	        // Handle exceptions and return an error response
+//	        return new ResponseEntity<>("Error updating lead: " + e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+//	               
+//	    }
+//	}
 	
 	//---------------------------------------------------------------------------------------------------//
 	 
@@ -160,7 +225,13 @@ public class LeadFollowUpService {
 		}
 	}
 	
-	
 	//---------------------------------------------------------------------------------------------------//
+	
+	
+	
+	
+	
+	
+	
 	 
 }

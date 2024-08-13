@@ -34,18 +34,17 @@ public class Comment {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lead_uid", referencedColumnName = "uid", nullable = false)
-    @JsonBackReference
+    @JsonBackReference  //use for child entity to skip serialization and avoid circular references betwn bi-directional relation entities.
     private LeadFollowUp leadFollowUp;
 
-    @Column(name = "lead_name")
+    @Column(name = "lead_name")	
     private String leadName;
 
-    @PrePersist   // this is for get existing data from leadfollowup entity and store into comment enity as leadName
+    @PrePersist   // this is for get existing data from leadfollowUp entity and store into comment table as leadName.
     public void prePersist() {
         if (leadFollowUp != null) {
             this.leadName = leadFollowUp.getName();
         }
     }
- 
-    
+
 }
