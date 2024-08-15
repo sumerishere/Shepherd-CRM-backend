@@ -31,6 +31,7 @@ public class LeadFollowUp {
 	private String email;
 	private String mobileNumber;
 	private String address;
+	private String courseType;
 	
 	private LocalDateTime createdAt;
 	

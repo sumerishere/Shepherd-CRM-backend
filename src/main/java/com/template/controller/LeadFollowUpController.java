@@ -1,5 +1,7 @@
 package com.template.controller;
 
+import java.io.IOException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,8 @@ import com.template.model.LeadFollowUp;
 import com.template.repository.LeadFollowUpRepository;
 import com.template.service.LeadFollowUpService;
 
+import jakarta.mail.MessagingException;
+
 @RestController
 @CrossOrigin("*")
 public class LeadFollowUpController {
@@ -29,8 +33,18 @@ public class LeadFollowUpController {
 	
 	
 	@PostMapping("/save-lead")
-	public ResponseEntity<?> saveLead(@RequestBody LeadFollowUp leadInfo) {
-		return leadFollowUpService.saveLead(leadInfo);
+	public ResponseEntity<?> saveLead(@RequestBody LeadFollowUp leadInfo) throws MessagingException, IOException {
+		
+		try {
+			leadFollowUpService.saveLead(leadInfo);
+			leadFollowUpService.leadMail(leadInfo.getName(), leadInfo.getEmail(), leadInfo.getCourseType());
+			
+			 return ResponseEntity.ok("Lead saved successfully.");
+            
+        } 
+		catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+		}
 	}
 	
 	
