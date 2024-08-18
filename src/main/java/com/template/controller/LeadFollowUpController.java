@@ -1,6 +1,7 @@
 package com.template.controller;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -35,12 +36,18 @@ public class LeadFollowUpController {
 	@PostMapping("/save-lead")
 	public ResponseEntity<?> saveLead(@RequestBody LeadFollowUp leadInfo) throws MessagingException, IOException {
 		
+		Optional<LeadFollowUp> leadExist = leadFollowUpRepository.findByEmail(leadInfo.getEmail());
+		
 		try {
-			leadFollowUpService.saveLead(leadInfo);
-			leadFollowUpService.leadMail(leadInfo.getName(), leadInfo.getEmail(), leadInfo.getCourseType());
-			
-			 return ResponseEntity.ok("Lead saved successfully.");
-            
+			if(!leadExist.isPresent()) {
+				leadFollowUpService.saveLead(leadInfo);
+				leadFollowUpService.leadMail(leadInfo.getName(), leadInfo.getEmail(), leadInfo.getCourseType());
+				
+				return ResponseEntity.ok("Lead saved successfully.");
+			}
+			else {
+				return new ResponseEntity<>("Lead already exists!!", HttpStatus.BAD_REQUEST);
+			}
         } 
 		catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
