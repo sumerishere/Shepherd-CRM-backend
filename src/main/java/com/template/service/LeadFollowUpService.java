@@ -23,7 +23,7 @@ import com.template.repository.LeadFollowUpRepository;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-//import jakarta.transaction.Transactional;
+
 
 @Service
 public class LeadFollowUpService {
@@ -33,8 +33,7 @@ public class LeadFollowUpService {
 	
 	@Autowired
 	CommentRepository commentRepository;
-	
-	
+
 	@Autowired
 	JavaMailSender sender;
 	
@@ -102,9 +101,9 @@ public class LeadFollowUpService {
 	    mimeHelper.addInline("youtubeImage", youtubeRes);
 	    
 	    
-	 // Attach a PDF file
-//	    FileSystemResource pdfRes = new FileSystemResource(new File("C:\\Users\\SUMER KHAN\\OneDrive\\Desktop\\Sheperd-react\\Shepherd\\public\\course_pdf\\FullStack_+_React.pdf"));
-//	    mimeHelper.addAttachment("Your Course FullStack_React.pdf", pdfRes); // Set the file name as it appears to the recipient
+	    // Attach a PDF file
+	    //FileSystemResource pdfRes = new FileSystemResource(new File("C:\\Users\\SUMER KHAN\\OneDrive\\Desktop\\Sheperd-react\\Shepherd\\public\\course_pdf\\FullStack_+_React.pdf"));
+	    //mimeHelper.addAttachment("Your Course FullStack_React.pdf", pdfRes); // Set the file name as it appears to the recipient
 	    
 	    
 	    if(courseType.equals("Java fullStack development")) {
@@ -113,18 +112,18 @@ public class LeadFollowUpService {
 	    }
 	    else if(courseType.equals("Automation Testing")) {
 	    	 FileSystemResource pdfRes = new FileSystemResource(new File("C:\\Users\\SUMER KHAN\\OneDrive\\Desktop\\Sheperd-react\\Shepherd\\public\\course_pdf\\Java-Selenium_Syllabus_.pdf"));
-			 mimeHelper.addAttachment("Java-Selenium_Syllabus.pdf", pdfRes); // Set the file name as it appears to the recipient
+			 mimeHelper.addAttachment("Java-Selenium_Syllabus.pdf", pdfRes); 
 	    }
 	    else if(courseType.equals("UI/UX")) {
 	    	 FileSystemResource pdfRes = new FileSystemResource(new File("C:\\Users\\SUMER KHAN\\OneDrive\\Desktop\\Sheperd-react\\Shepherd\\public\\course_pdf\\Diploma-in-Fullstack-Development_UI_UX.pdf"));
-			 mimeHelper.addAttachment("UI/UX_syllabus.pdf", pdfRes); // Set the file name as it appears to the recipient
+			 mimeHelper.addAttachment("UI/UX_syllabus.pdf", pdfRes); 
 	    }
 	    else if(courseType.equals("MERN Stack")) {
 	    	 FileSystemResource pdfRes = new FileSystemResource(new File("C:\\Users\\SUMER KHAN\\OneDrive\\Desktop\\Sheperd-react\\Shepherd\\public\\course_pdf\\Advance_JS_&_React syllabus.pdf"));
-			 mimeHelper.addAttachment("MERN_Stack_syllabus.pdf", pdfRes); // Set the file name as it appears to the recipient
+			 mimeHelper.addAttachment("MERN_Stack_syllabus.pdf", pdfRes); 
 	    }else {
 	    	 FileSystemResource pdfRes = new FileSystemResource(new File("C:\\Users\\SUMER KHAN\\OneDrive\\Desktop\\Sheperd-react\\Shepherd\\public\\course_pdf\\Rest_Api_Testing_syllabus.pdf"));
-			 mimeHelper.addAttachment("REST_Api_syllabus.pdf", pdfRes); // Set the file name as it appears to the recipient
+			 mimeHelper.addAttachment("REST_Api_syllabus.pdf", pdfRes); 
 	    }
 
 	    // Send the email
@@ -206,6 +205,7 @@ public class LeadFollowUpService {
 	//--------------------------- Update lead info (PUT/UPDATE API) -----------------------------//
 	
 	public ResponseEntity<?> updateLead(Long uid, LeadFollowUp updatedLeadFollowUp, List<String> newComments) {
+		
 	    try {
 	        // Fetch the existing LeadFollowUp entity by UID
 	        LeadFollowUp leadFollowUp = leadFollowUpRepository.findById(uid)
@@ -216,38 +216,45 @@ public class LeadFollowUpService {
 	        leadFollowUp.setEmail(updatedLeadFollowUp.getEmail());
 	        leadFollowUp.setMobileNumber(updatedLeadFollowUp.getMobileNumber());
 	        leadFollowUp.setAddress(updatedLeadFollowUp.getAddress());
+	        leadFollowUp.setSource(updatedLeadFollowUp.getSource());
+	        leadFollowUp.setReferName(updatedLeadFollowUp.getReferName());
+	        leadFollowUp.setQualification(updatedLeadFollowUp.getQualification());
 
 	        // Save the updated lead information
 	        leadFollowUp = leadFollowUpRepository.save(leadFollowUp); // Only save once after all changes
 
 	        // Process and save new comments
 	        if (newComments != null && !newComments.isEmpty()) {
+	        	
 	            List<Comment> commentObjects = new ArrayList<>();
 
 	            for (String commentText : newComments) {
+	            	
 	                if (commentText != null && !commentText.trim().isEmpty()) { // Check for non-empty comments
+	                	
 	                    if (commentText.length() <= 151) { // Validate comment length
+	                    	
 	                        Comment comment = new Comment();
 	                        comment.setComment(commentText);
 	                        comment.setCreatedAt(LocalDateTime.now());
 	                        comment.setLeadFollowUp(leadFollowUp);
 	                        commentObjects.add(comment);
-	                    } else {
+	                    } 
+	                    else {
 	                        return new ResponseEntity<>("Comment length should be under the range (1-151) letters.", HttpStatus.BAD_REQUEST);
 	                    }
 	                }
 	            }
-
+	            
 	            // Save valid comments
 	            if (!commentObjects.isEmpty()) {
 	                commentRepository.saveAll(commentObjects);
 	            }
 	        }
-
 	        // Return success response
 	        return new ResponseEntity<>("Lead updated successfully", HttpStatus.OK);
-
-	    } catch (Exception e) {
+	    }
+	    catch (Exception e) {
 	        // Handle exceptions and return an error response
 	        return new ResponseEntity<>("Error updating lead: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
@@ -336,6 +343,14 @@ public class LeadFollowUpService {
 	
 	
 	
+	//---------------------------- search lead by name -----------------------------------------------//
+	
+	public ResponseEntity<List<?>> searchLeadName(String name) {
+		
+		return new ResponseEntity<>(leadFollowUpRepository.searchByLeadName(name), HttpStatus.OK);		
+	}
+	
+	//---------------------------------------------------------------------------------------------------//
 	
 	
 	

@@ -32,6 +32,9 @@ public class LeadFollowUp {
 	private String mobileNumber;
 	private String address;
 	private String courseType;
+	private String source;
+	private String referName;
+	private String qualification;
 	
 	private LocalDateTime createdAt;
 	
