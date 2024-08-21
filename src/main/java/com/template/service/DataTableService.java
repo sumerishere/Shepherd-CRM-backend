@@ -319,6 +319,25 @@ public class DataTableService implements ValidationConstant {
 	
   //------------------------------------------------------------------------------------------//
 
+	
+  
+  
+  //-------------------------------- search client by name (GET API) -------------------------//
+	
+  public ResponseEntity<?> searchClientName(String name,Long templateId){
+	  
+	try {
+		
+		  return new ResponseEntity<> (dataTableRepository.findClientByNameAndTemplateId(name,templateId), HttpStatus.OK);
+	} 
+	catch (Exception e) {
+		e.printStackTrace();
+		return new ResponseEntity<> ("internal server error :"+e, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+  }
+	
+	
 
+  //------------------------------------------------------------------------------------------//
 
 }

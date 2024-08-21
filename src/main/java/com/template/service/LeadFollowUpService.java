@@ -219,6 +219,7 @@ public class LeadFollowUpService {
 	        leadFollowUp.setSource(updatedLeadFollowUp.getSource());
 	        leadFollowUp.setReferName(updatedLeadFollowUp.getReferName());
 	        leadFollowUp.setQualification(updatedLeadFollowUp.getQualification());
+	        leadFollowUp.setCategory(updatedLeadFollowUp.getCategory());
 
 	        // Save the updated lead information
 	        leadFollowUp = leadFollowUpRepository.save(leadFollowUp); // Only save once after all changes

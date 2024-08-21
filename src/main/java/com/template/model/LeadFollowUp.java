@@ -35,6 +35,7 @@ public class LeadFollowUp {
 	private String source;
 	private String referName;
 	private String qualification;
+	private String category;
 	
 	private LocalDateTime createdAt;
 	
