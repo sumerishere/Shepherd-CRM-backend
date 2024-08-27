@@ -1,6 +1,7 @@
 package com.template.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -15,4 +16,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 	List<Comment> findByUid(@Param("uid") Long uid);
 	
 	List<Comment> findByLeadFollowUp(LeadFollowUp leadFollowUp);
+	
+	Optional<Comment> findCommentById(Long id); // Use Optional for better null handling
+
 }

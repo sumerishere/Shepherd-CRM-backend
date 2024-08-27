@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.template.BcryptPasswordEncoder.BcryptEncoderConfig;
 import com.template.model.User;
@@ -36,7 +37,7 @@ public class UserService implements ValidationConstant{
 	//--------------------------------------- user registration ( POST ) --------------------------------------------//
 	
 	@Transactional
-	public ResponseEntity<?> saveUserInfo(User user) {
+	public ResponseEntity<?> saveUserInfo(User user, MultipartFile logo) {
 		  
         try {
         	
@@ -86,6 +87,11 @@ public class UserService implements ValidationConstant{
             // Encode the password
             String encodedPassword = passwordEncoder.encode(user.getPassword());
             user.setPassword(encodedPassword);
+            
+            if (logo != null && !logo.isEmpty()) {
+                byte[] logoBytes = logo.getBytes();
+                user.setLogo(logoBytes);  // Set the logo byte[] in the user
+            }
 
             // Save the user
             userRepository.save(user);

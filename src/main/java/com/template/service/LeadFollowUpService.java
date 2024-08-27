@@ -2,6 +2,8 @@ package com.template.service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -144,8 +146,15 @@ public class LeadFollowUpService {
 	    
 	    try {
 	        if (!leadExist.isPresent()) {
-	            // Set createdAt to the current datetime
-	            leadInfo.setCreatedAt(LocalDateTime.now());
+	        	
+	        	 // Get the current date and time
+	            LocalDateTime now = LocalDateTime.now();
+	            
+	            //This truncates the LocalDateTime to discard the seconds and nanoseconds, 
+	            //so only the year, month, day, hour, and minute parts are retained.
+	            LocalDateTime truncatedTime = now.truncatedTo(ChronoUnit.MINUTES);
+	            
+	            leadInfo.setCreatedAt(truncatedTime);
 	  
 	            leadFollowUpRepository.save(leadInfo);
 	            return new ResponseEntity<>("Lead info saved!!", HttpStatus.OK);
@@ -217,9 +226,11 @@ public class LeadFollowUpService {
 	        leadFollowUp.setMobileNumber(updatedLeadFollowUp.getMobileNumber());
 	        leadFollowUp.setAddress(updatedLeadFollowUp.getAddress());
 	        leadFollowUp.setSource(updatedLeadFollowUp.getSource());
+	        leadFollowUp.setCourseType(updatedLeadFollowUp.getCourseType());
 	        leadFollowUp.setReferName(updatedLeadFollowUp.getReferName());
 	        leadFollowUp.setQualification(updatedLeadFollowUp.getQualification());
 	        leadFollowUp.setCategory(updatedLeadFollowUp.getCategory());
+	        leadFollowUp.setFollowUpDate(updatedLeadFollowUp.getFollowUpDate());
 
 	        // Save the updated lead information
 	        leadFollowUp = leadFollowUpRepository.save(leadFollowUp); // Only save once after all changes

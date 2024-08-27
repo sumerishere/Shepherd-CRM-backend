@@ -37,6 +37,9 @@ public class User {
 
     @Column(name = "password", nullable = false)
     private String password;
+    
+    @Column(name="Logo",columnDefinition = "LONGBLOB")
+    private byte[] Logo;
 
     
     //----- relatioship mapping -----//

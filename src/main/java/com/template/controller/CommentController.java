@@ -5,8 +5,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.template.UserCommentDTO.CommentUpdateRequest;
 import com.template.service.CommentService;
 
 @RestController
@@ -23,5 +27,13 @@ public class CommentController {
     	return commentService.getComments(uid);
     }
   
+    @GetMapping("/get-comment")
+    public ResponseEntity<?> getComment(@RequestParam("commentId") Long id){
+    	return  commentService.getComment(id);
+    }
     
+    @PutMapping("/update-comment")
+    public ResponseEntity<?> updateComment(@RequestParam("commentId") Long id, @RequestBody CommentUpdateRequest updateRequest) {
+        return commentService.updateComment(id, updateRequest);
+    }
 }
