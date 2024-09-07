@@ -1,7 +1,6 @@
 package com.template.model;
 //import com.fasterxml.jackson.databind.JsonNode;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
@@ -10,12 +9,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
-
 import java.time.LocalDateTime;
-import java.util.Set;
+
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.jsonConverter.JsonNodeConverter;
@@ -40,7 +37,7 @@ public class FormTemplate {
     private JsonNode fields;
     
     private String password;
-    
+  
     
     @ManyToOne
     @JoinColumn(name = "user_name", referencedColumnName = "user_name", nullable = false)

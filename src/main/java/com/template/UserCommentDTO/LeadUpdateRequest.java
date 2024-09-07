@@ -1,6 +1,5 @@
 package com.template.UserCommentDTO;
 
-import com.template.model.Comment;
 import com.template.model.LeadFollowUp;
 import lombok.Data;
 
