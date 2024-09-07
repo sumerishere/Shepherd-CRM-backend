@@ -23,9 +23,11 @@ import com.template.repository.LeadFollowUpRepository;
 import com.template.service.LeadFollowUpService;
 
 import jakarta.mail.MessagingException;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @CrossOrigin("*")
+@Slf4j
 public class LeadFollowUpController {
 	
 	@Autowired
@@ -43,7 +45,10 @@ public class LeadFollowUpController {
 		try {
 			if(!leadExist.isPresent()) {
 				leadFollowUpService.saveLead(leadInfo);
+				
+				log.info("mail sending");
 				leadFollowUpService.leadMail(leadInfo.getName(), leadInfo.getEmail(), leadInfo.getCourseType());
+				log.info("mail sended successfully!!");
 				
 				return ResponseEntity.ok("Lead saved successfully.");
 			}
@@ -70,6 +75,12 @@ public class LeadFollowUpController {
 	}
 	
 	
+	@PutMapping("/update-followup/{uid}")
+	public  ResponseEntity<?> updateFollowUp(@PathVariable("uid") Long uid, @RequestBody LeadFollowUp leadObject){
+		return leadFollowUpService.updateFollowUp(uid, leadObject);
+	}
+	
+	
 	@DeleteMapping("delete-lead-by-id/{uid}")
 	public ResponseEntity<?> deleteLead(@PathVariable("uid")Long uid){
 		return leadFollowUpService.deleteLead(uid);
@@ -80,9 +91,9 @@ public class LeadFollowUpController {
 		return new ResponseEntity<>(leadFollowUpRepository.findAll(), HttpStatus.OK);
 	}
 	
-	@GetMapping("search-lead-name")
-	public ResponseEntity<List<?>> searchLeadName(@RequestParam("name") String name){
-		return leadFollowUpService.searchLeadName(name);
+	@GetMapping("/search-lead-name")
+	public ResponseEntity<List<?>> searchLeadName(@RequestParam(value = "name", required = false) String name, @RequestParam(value = "mobile", required = false) String mobileNumber){
+		return leadFollowUpService.searchLeadByNameOrMobileNumber(name,mobileNumber);
 	}
 	
 }

@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,13 +23,15 @@ import com.template.model.Comment;
 import com.template.model.LeadFollowUp;
 import com.template.repository.CommentRepository;
 import com.template.repository.LeadFollowUpRepository;
+import com.template.validationConstant.ValidationConstant;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import jakarta.transaction.Transactional;
 
 
 @Service
-public class LeadFollowUpService {
+public class LeadFollowUpService implements ValidationConstant {
 	
 	@Autowired
 	LeadFollowUpRepository leadFollowUpRepository;
@@ -153,7 +156,7 @@ public class LeadFollowUpService {
 	            //This truncates the LocalDateTime to discard the seconds and nanoseconds, 
 	            //so only the year, month, day, hour, and minute parts are retained.
 	            LocalDateTime truncatedTime = now.truncatedTo(ChronoUnit.MINUTES);
-	            
+	            System.out.println("AssignTo: " + leadInfo.getAssignTo());
 	            leadInfo.setCreatedAt(truncatedTime);
 	  
 	            leadFollowUpRepository.save(leadInfo);
@@ -212,7 +215,7 @@ public class LeadFollowUpService {
 	
 	
 	//--------------------------- Update lead info (PUT/UPDATE API) -----------------------------//
-	
+	@Transactional
 	public ResponseEntity<?> updateLead(Long uid, LeadFollowUp updatedLeadFollowUp, List<String> newComments) {
 		
 	    try {
@@ -231,6 +234,8 @@ public class LeadFollowUpService {
 	        leadFollowUp.setQualification(updatedLeadFollowUp.getQualification());
 	        leadFollowUp.setCategory(updatedLeadFollowUp.getCategory());
 	        leadFollowUp.setFollowUpDate(updatedLeadFollowUp.getFollowUpDate());
+	        leadFollowUp.setAssignTo(updatedLeadFollowUp.getAssignTo());
+	        leadFollowUp.setStatusType(updatedLeadFollowUp.getStatusType());
 
 	        // Save the updated lead information
 	        leadFollowUp = leadFollowUpRepository.save(leadFollowUp); // Only save once after all changes
@@ -325,6 +330,48 @@ public class LeadFollowUpService {
 	 
 	 
 	
+	//------------------------------------ update lead followup details (PUT API) ------------------------//
+	
+	@Transactional
+	public  ResponseEntity<?> updateFollowUp(Long uid, LeadFollowUp leadObject){
+		
+		try {
+			 LeadFollowUp leadFollowUp = leadFollowUpRepository.findById(uid)
+		                .orElseThrow(() -> new RuntimeException("Lead not found with UID: " + uid));
+			 
+			 leadFollowUp.setName(leadObject.getName());
+			 
+			 if(leadObject.getMobileNumber().matches(MOBILE_NUMBER_PATTERN)) {
+				 leadFollowUp.setMobileNumber(leadObject.getMobileNumber());
+			 }else {
+				 return new ResponseEntity<> ("mobile number invalid",HttpStatus.BAD_REQUEST);
+			 }
+			 
+			 if(leadObject.getEmail().matches(EMAIL_PATTERN)) {
+				 leadFollowUp.setEmail(leadObject.getEmail());
+			 }else {
+				 return new ResponseEntity<> ("invalid!! email",HttpStatus.BAD_REQUEST);
+			 }
+			
+			 leadFollowUp.setFollowUpDate(leadObject.getFollowUpDate());
+			 leadFollowUp.setAssignTo(leadObject.getAssignTo());
+			 leadFollowUp.setStatusType(leadObject.getStatusType());
+			 
+			 leadFollowUp = leadFollowUpRepository.save(leadFollowUp);
+			 
+			 return new ResponseEntity<>("Lead updated successfully", HttpStatus.OK);
+			 
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<>("Error updating lead: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+	}
+	
+	//---------------------------------------------------------------------------------------------------//
+
+	
+	
 	
 	//----------------------------------- delete lead by uid ( DELETE API ) ------------------------------------//
 	
@@ -357,10 +404,20 @@ public class LeadFollowUpService {
 	
 	//---------------------------- search lead by name -----------------------------------------------//
 	
-	public ResponseEntity<List<?>> searchLeadName(String name) {
-		
-		return new ResponseEntity<>(leadFollowUpRepository.searchByLeadName(name), HttpStatus.OK);		
+	public ResponseEntity<List<?>> searchLeadByNameOrMobileNumber(String name, String mobileNumber) {
+	    
+		if (name != null && !name.isEmpty()) {
+	        // Only name provided
+	        return new ResponseEntity<>(leadFollowUpRepository.searchByLeadName(name), HttpStatus.OK);
+	    } else if (mobileNumber != null && !mobileNumber.isEmpty()) {
+	        // Only mobile number provided
+	        return new ResponseEntity<>(leadFollowUpRepository.searchByMobileNumber(mobileNumber), HttpStatus.OK);
+	    } else {
+	        // Neither name nor mobile number provided, return empty result
+	        return new ResponseEntity<>(Collections.emptyList(), HttpStatus.OK);
+	    }
 	}
+
 	
 	//---------------------------------------------------------------------------------------------------//
 	

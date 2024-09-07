@@ -37,6 +37,8 @@ public class LeadFollowUp {
 	private String qualification;
 	private String category;
 	private String followUpDate;
+	private String assignTo;
+	private String statusType;
 	
 	private LocalDateTime createdAt;
 	

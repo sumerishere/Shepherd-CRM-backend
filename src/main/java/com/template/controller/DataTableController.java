@@ -73,7 +73,6 @@ public class DataTableController {
 		return dataTableService.deleteUserByDataTableId(UID);
 	}
 	
-	
 	@GetMapping("/search-client")
 	public ResponseEntity<?> searchClientName( @RequestParam("name") String name, Long templateId){
 		return dataTableService.searchClientName(name, templateId);
