@@ -12,11 +12,11 @@ import org.springframework.web.multipart.MultipartFile;
 import com.template.model.InvoiceTable;
 import com.template.service.InvoiceTableService;
 
-//import lombok.extern.slf4j.Slf4j;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @CrossOrigin("*")
-//@Slf4j
+@Slf4j
 public class InvoiceTableController {
 	
 	@Autowired
@@ -24,29 +24,46 @@ public class InvoiceTableController {
 	
 	
 	@PostMapping("/save-invoice")
-    public ResponseEntity<String> saveInvoice(
-            @RequestParam("candidateName") String candidateName,
-            @RequestParam("candidateMobile") String candidateMobile,
-            @RequestParam("candidateMail") String candidateMail,
-            @RequestParam("organizationName") String organizationName,
-            @RequestParam("invoicePdf") MultipartFile invoicePdf) {
-        
-        try {
-            InvoiceTable invoice = new InvoiceTable();
-            invoice.setCandidateName(candidateName);
-            invoice.setCandidateMobile(candidateMobile);
-            invoice.setCandidateMail(candidateMail);
-            invoice.setOrganizationName(organizationName);
-            invoice.setInvoicePdf(invoicePdf.getBytes());
+	public ResponseEntity<?> saveInvoice(
+	        @RequestParam(value="billedToName",required=true) String candidateName,
+	        @RequestParam(value="candidateMobile",required=true) String candidateMobile,
+	        @RequestParam(value="candidateMail",required=true) String candidateMail,
+	        @RequestParam(value="billedByName",required=true) String organizationName,
+	        @RequestParam(value="invoicePdf",required=true) MultipartFile invoicePdf) {
 
-            invoiceTableService.saveInvoice(invoice);
-            
-            return new ResponseEntity<>("Invoice saved successfully!", HttpStatus.OK);
-        } 
-        catch (Exception e) {
-            return new ResponseEntity<>("Failed to save invoice", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+	    try {
+	        // Check for non-empty fields
+	        if (candidateName == null || candidateName.isBlank() ||
+	            candidateMobile == null || candidateMobile.isBlank() ||
+	            candidateMail == null || candidateMail.isBlank() ||
+	            organizationName == null || organizationName.isBlank() ||
+	            invoicePdf.isEmpty()) {
+	            return new ResponseEntity<>("All fields are required and must be non-empty.", HttpStatus.BAD_REQUEST);
+	        }
+
+	        // If all fields are valid, proceed with saving the invoice
+	        InvoiceTable invoice = new InvoiceTable();
+	        invoice.setCandidateName(candidateName);
+	        invoice.setCandidateMobile(candidateMobile);
+	        invoice.setCandidateMail(candidateMail);
+	        invoice.setOrganizationName(organizationName);
+	        invoice.setInvoicePdf(invoicePdf.getBytes());
+
+	        log.info("Data sending...");
+	        invoiceTableService.saveInvoice(invoice);
+	        log.info("Data saved successfully!");
+
+	        log.info("Sending mail...");
+	        invoiceTableService.sendInvoiceMail(candidateMail, candidateName, invoice.getId());
+	        log.info("Mail sent!");
+
+	        return new ResponseEntity<>("Invoice saved successfully!", HttpStatus.OK);
+	    } 
+	    catch (Exception e) {
+	        return new ResponseEntity<>("Failed to save invoice", HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
+	}
+
 
 	
 }
