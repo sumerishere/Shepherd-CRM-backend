@@ -1,6 +1,8 @@
 package com.template.service;
 
 import java.io.File;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -11,12 +13,18 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import com.template.invoiceDTO.InvoiceTableDTO;
+//import com.template.controller.ResponseEntiy;
 import com.template.model.InvoiceTable;
+import com.template.repository.DataTableRepository;
 import com.template.repository.InvoiceTableRepository;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import lombok.extern.slf4j.Slf4j;
 
+
+@Slf4j
 @Service
 public class InvoiceTableService {
 	
@@ -37,6 +45,12 @@ public class InvoiceTableService {
         
         // Get the PDF as byte[]
         byte[] pdfBytes = invoice.getInvoicePdf();
+        
+        log.info("PDF size in mail: " + pdfBytes.length);
+        // Check if the PDF is not empty
+        if (pdfBytes == null || pdfBytes.length == 0) {
+            throw new RuntimeException("The PDF data is empty");
+        }
 		
 		
 	 	String subject = "Fees Acknowledgement!!!, Testing Shastra.";
@@ -50,7 +64,7 @@ public class InvoiceTableService {
 	    // HTML content with embedded image using cid for Instagram,LinkedIn and youtube icons.
 	    String body = "<html><body>"
 	            + "Hi " + candidateName + ","
-	            + "<br><br>Thank you for joining Testing Shastra!"
+	            + "<br><br>Thank you for joining Testing Shastra!!!"
 	            + "<br><br><p><strong style=\"font-size: 14px;\">Find below your fees acknowledgement pdf.</strong></p>"
 	            + "<br><br>We are thrilled that you've shown interest in our programs."
 	            + "<br><br>At Testing Shastra, we are committed to providing top-notch training and support throughout your learning journey. "
@@ -126,5 +140,27 @@ public class InvoiceTableService {
 	
 	
 	
+	
+	//------------------- Get sended invoice candidates details (GET API)  -------------------------//
+	
+	public List<InvoiceTableDTO> getAllCandidates() {
+		
+	    return invoiceTableRepository.findAll().stream().map(invoice -> {
+	    	
+	        InvoiceTableDTO dto = new InvoiceTableDTO();
+	        
+	        dto.setId(invoice.getId());
+	        dto.setCandidateName(invoice.getCandidateName());
+	        dto.setCandidateMobile(invoice.getCandidateMobile());
+	        dto.setCandidateMail(invoice.getCandidateMail());
+	        dto.setOrganizationName(invoice.getOrganizationName());
+	        
+	        return dto;
+	        
+	    }).collect(Collectors.toList());
+	}
+
+	
+	//-----------------------------------------------------------------------------------------//
 
 }

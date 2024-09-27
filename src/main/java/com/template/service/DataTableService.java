@@ -87,7 +87,7 @@ public class DataTableService implements ValidationConstant {
 	        
 	        dataTableRepository.save(dataTable);
 
-	        return new ResponseEntity<>("Data saved successfully!", HttpStatus.OK);
+	        return new ResponseEntity<>("Data saved successfully!", HttpStatus.CREATED);
 	    } 
 	    catch (Exception e) {
 	        e.printStackTrace();
@@ -177,7 +177,7 @@ public class DataTableService implements ValidationConstant {
 				
 				List<DataTable> data = checkTemplateId.get();  //object get
 				
-				return new ResponseEntity<> (data,HttpStatus.OK);
+				return new ResponseEntity<> (data,HttpStatus.CREATED);
 			}
 			
 		}
@@ -205,7 +205,7 @@ public class DataTableService implements ValidationConstant {
 				
 				JsonNode userdata = checkUser.get().getFields_Data();
 				
-				return new ResponseEntity<> (userdata,HttpStatus.OK);
+				return new ResponseEntity<> (userdata,HttpStatus.CREATED);
 			}
 		} 
 		catch (Exception e) {
@@ -272,7 +272,7 @@ public class DataTableService implements ValidationConstant {
 	            dataTable.setFieldsData(updateDataTableDTO.getFieldsData());
 	            dataTableRepository.save(dataTable);
 	            
-	            return new ResponseEntity<>("User info updated successfully!", HttpStatus.OK);
+	            return new ResponseEntity<>("User info updated successfully!", HttpStatus.CREATED);
 	        } 
 	        else {
 	            throw new RuntimeException("DataTable with UID " + updateDataTableDTO.getUid() + " not found");

@@ -1,0 +1,35 @@
+services:
+  db:
+    image: mysql:8.0                       # MySQL version
+    container_name: mysql-db                # Name of the MySQL container
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword             # Root password
+      MYSQL_DATABASE: templategen           # Database name
+      MYSQL_USER: myuser                      # Username
+      MYSQL_PASSWORD: mypassword                  # Password
+    ports:
+      - "3306:3306"                         # Expose MySQL port
+    volumes:
+      - db_data:/var/lib/mysql              # Volume for data persistence
+    networks:
+      - backend-network                     # Shared network
+
+  backend:
+    build: E:/Template_Generation/template-app/template-app   # Path to the Spring Boot project containing Dockerfile
+    container_name: springboot-app           # Name of the Spring Boot container
+    ports:
+      - "8080:8080"                         # Expose Spring Boot app on port 8080
+    depends_on:
+      - db                                  # Ensure database is up before starting backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/templategen   # Reference MySQL as 'db'
+      SPRING_DATASOURCE_USERNAME: myuser                         # Database username
+      SPRING_DATASOURCE_PASSWORD: mypassword                       # Database password
+    networks:
+      - backend-network                     # Shared network
+
+volumes:
+  db_data:                                   # Volume for MySQL data persistence
+
+networks:
+  backend-network:                           # Custom network for communication between services

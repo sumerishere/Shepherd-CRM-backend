@@ -2,7 +2,6 @@ package com.template.service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,8 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.FileSystemResource;
-import java.io.File;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 //import org.springframework.mail.SimpleMailMessage;
@@ -48,93 +46,108 @@ public class LeadFollowUpService implements ValidationConstant {
 	public void leadMail(String name, String to, String courseType) throws MessagingException, IOException {
 
 	    String subject = "Thanks For!!! Contacting Testing Shastra.";
-
-	    // Create MimeMessage and MimeMessageHelper
 	    MimeMessage mime = sender.createMimeMessage();
-	    MimeMessageHelper mimeHelper = new MimeMessageHelper(mime, true); // 'true' indicates multipart message
+	    MimeMessageHelper mimeHelper = new MimeMessageHelper(mime, true); // multipart message
 	    mimeHelper.setTo(to);
 	    mimeHelper.setSubject(subject);
 
-	    // HTML content with embedded image using cid for Instagram,LinkedIn and youtube icons.
 	    String body = "<html><body>"
 	            + "Hi " + name + ","
 	            + "<br><br>Thank you for reaching out to Testing Shastra!"
 	            + "<br><br>We are thrilled that you've shown interest in our programs."
 	            + "<br>Your selected course is: <b>" + courseType + "</b>."
-	            + "<br><br>At Testing Shastra, we are committed to providing top-notch training and support throughout your learning journey. "
-	            + "Our courses are designed to equip you with the skills needed to excel in the competitive world of technology."
-	            + "<br><br>Whether you're looking to start a new career or enhance your existing expertise, our team of dedicated instructors will guide you every step of the way."
-	            + "<br>We believe in fostering a learning environment that encourages growth and success."
-	            + "<br><br>To learn more about our training programs, please visit our website at: "
-	            + "<a href=\"https://www.testingshastra.com/\">https://www.testingshastra.com/</a>."
+	            + "<br><br>At Testing Shastra, we are committed to providing top-notch training and support..."
 	            + "<br><br>Follow us on:   "
-	            + "<a margin-top:12px; href=\"https://www.instagram.com/testingshastra/\" target=\"_blank\">"
+	            + "<a href=\"https://www.instagram.com/testingshastra/\" target=\"_blank\">"
 	            + "<img src='cid:instaImage' style='width:18px; height:18px;' />"
 	            + "</a> |  "
-	            + "<a margin-top:12px; href=\"https://www.linkedin.com/company/testing-shasrta/\" target=\"_blank\">"
-	            + "<img src='cid:linkedinImage' style='width:18px; height:16px; ' />"
+	            + "<a href=\"https://www.linkedin.com/company/testing-shasrta/\" target=\"_blank\">"
+	            + "<img src='cid:linkedinImage' style='width:18px; height:16px;' />"
 	            + "</a> |  "
-	            + "<a margin-top:12px; href=\"https://www.youtube.com/@testingshastra/\" target=\"_blank\">"
-	            + "<img src='cid:youtubeImage' style='width:18px; height:16px;' /> "
+	            + "<a href=\"https://www.youtube.com/@testingshastra/\" target=\"_blank\">"
+	            + "<img src='cid:youtubeImage' style='width:18px; height:16px;' />"
 	            + "</a>"
 	            + "<br><br>We look forward to helping you achieve your goals!"
 	            + "<br><br>Contact details:"
 	            + "<br>+91-9130502135 | +91-8484831616 | +91-8484831600" 
 	            + "<br>Mail: info@testingshastra.com"
-	            + "<br><br>Best regards,<br>Testing Shastra ;)"
+	            + "<br><br>Best regards,<br>Testing Shastra ;) "
 	            + "<br><br><img src='cid:adminLogo' style='width:110px; height:110px;' />"
 	            + "<br><br><small>*** Please note that this is an automatically generated email and cannot receive replies ***</small>"
 	            + "</body></html>";
-	    
-
-	    // Set the HTML content
+	 // Set the HTML content
 	    mimeHelper.setText(body, true); // true indicates HTML content
 
-	    // Attach the course image
-	    FileSystemResource adminLogogRes = new FileSystemResource(new File("C:\\Users\\SUMER KHAN\\OneDrive\\Desktop\\Sheperd-react\\Shepherd\\public\\Admin-img\\logo.png"));
-	    mimeHelper.addInline("adminLogo", adminLogogRes); // 'courseImage' is the Content ID (cid)
 
-	    // Attach Instagram image icon
-	    FileSystemResource instaRes = new FileSystemResource(new File("C:\\Users\\SUMER KHAN\\OneDrive\\Desktop\\Sheperd-react\\Shepherd\\public\\social-media-imgs\\insta-png.webp"));
-	    mimeHelper.addInline("instaImage", instaRes); // 'instaImage' is the Content ID (cid)
-	    
-	    // Attach LinkedIn image icon
-	    FileSystemResource linkedinRes = new FileSystemResource(new File("C:\\Users\\SUMER KHAN\\OneDrive\\Desktop\\Sheperd-react\\Shepherd\\public\\social-media-imgs\\linkedln-png.webp"));
-	    mimeHelper.addInline("linkedinImage", linkedinRes); // 'linkedinImage' is the Content ID (cid)
-	    
-	    FileSystemResource youtubeRes = new FileSystemResource(new File("C:\\Users\\SUMER KHAN\\OneDrive\\Desktop\\Sheperd-react\\Shepherd\\public\\social-media-imgs\\youtube-png.webp"));
-	    mimeHelper.addInline("youtubeImage", youtubeRes);
-	    
-	    
-	    // Attach a PDF file
-	    //FileSystemResource pdfRes = new FileSystemResource(new File("C:\\Users\\SUMER KHAN\\OneDrive\\Desktop\\Sheperd-react\\Shepherd\\public\\course_pdf\\FullStack_+_React.pdf"));
-	    //mimeHelper.addAttachment("Your Course FullStack_React.pdf", pdfRes); // Set the file name as it appears to the recipient
-	    
-	    
-	    if(courseType.equals("Java fullStack development")) {
-		    FileSystemResource pdfRes = new FileSystemResource(new File("C:\\Users\\SUMER KHAN\\OneDrive\\Desktop\\Sheperd-react\\Shepherd\\public\\course_pdf\\FullStack_+_React.pdf"));
-		    mimeHelper.addAttachment("FullStack_plus_React.pdf", pdfRes); // Set the file name as it appears to the recipient
-	    }
-	    else if(courseType.equals("Automation Testing")) {
-	    	 FileSystemResource pdfRes = new FileSystemResource(new File("C:\\Users\\SUMER KHAN\\OneDrive\\Desktop\\Sheperd-react\\Shepherd\\public\\course_pdf\\Java-Selenium_Syllabus_.pdf"));
-			 mimeHelper.addAttachment("Java-Selenium_Syllabus.pdf", pdfRes); 
-	    }
-	    else if(courseType.equals("UI/UX")) {
-	    	 FileSystemResource pdfRes = new FileSystemResource(new File("C:\\Users\\SUMER KHAN\\OneDrive\\Desktop\\Sheperd-react\\Shepherd\\public\\course_pdf\\Diploma-in-Fullstack-Development_UI_UX.pdf"));
-			 mimeHelper.addAttachment("UI/UX_syllabus.pdf", pdfRes); 
-	    }
-	    else if(courseType.equals("MERN Stack")) {
-	    	 FileSystemResource pdfRes = new FileSystemResource(new File("C:\\Users\\SUMER KHAN\\OneDrive\\Desktop\\Sheperd-react\\Shepherd\\public\\course_pdf\\Advance_JS_&_React syllabus.pdf"));
-			 mimeHelper.addAttachment("MERN_Stack_syllabus.pdf", pdfRes); 
-	    }else {
-	    	 FileSystemResource pdfRes = new FileSystemResource(new File("C:\\Users\\SUMER KHAN\\OneDrive\\Desktop\\Sheperd-react\\Shepherd\\public\\course_pdf\\Rest_Api_Testing_syllabus.pdf"));
-			 mimeHelper.addAttachment("REST_Api_syllabus.pdf", pdfRes); 
+	    // Set the HTML content
+	    // Attach images using relative paths
+	    mimeHelper.addInline("adminLogo", new ClassPathResource("static/Admin-img/logo.png"));
+	    mimeHelper.addInline("instaImage", new ClassPathResource("static/social-media-imgs/insta-png.webp"));
+	    mimeHelper.addInline("linkedinImage", new ClassPathResource("static/social-media-imgs/linkedln-png.webp"));
+	    mimeHelper.addInline("youtubeImage", new ClassPathResource("static/social-media-imgs/youtube-png.webp"));
+
+	    // Attach PDF files based on the course type
+	    if (courseType.equals("Java fullStack development")) {
+	        mimeHelper.addAttachment("FullStack_plus_React.pdf", new ClassPathResource("static/course_pdf/FullStack_+_React.pdf"));
+	    } else if (courseType.equals("Automation Testing")) {
+	        mimeHelper.addAttachment("Java-Selenium_Syllabus.pdf", new ClassPathResource("static/course_pdf/Java-Selenium_Syllabus_.pdf"));
+	    } else if (courseType.equals("UI/UX")) {
+	        mimeHelper.addAttachment("UI/UX_syllabus.pdf", new ClassPathResource("static/course_pdf/Diploma-in-Fullstack-Development_UI_UX.pdf"));
+	    } else if (courseType.equals("MERN Stack")) {
+	        mimeHelper.addAttachment("MERN_Stack_syllabus.pdf", new ClassPathResource("static/course_pdf/Advance_JS_&_React syllabus.pdf"));
+	    } else {
+	        mimeHelper.addAttachment("REST_Api_syllabus.pdf", new ClassPathResource("static/course_pdf/Rest_Api_Testing_syllabus.pdf"));
 	    }
 
 	    // Send the email
 	    sender.send(mime);
 	}
 
+
+	
+	
+    // Attach the course image
+//    FileSystemResource adminLogogRes = new FileSystemResource(new File("C:\\Users\\SUMER KHAN\\OneDrive\\Desktop\\Sheperd-react\\Shepherd\\public\\Admin-img\\logo.png"));
+//    mimeHelper.addInline("adminLogo", adminLogogRes); // 'courseImage' is the Content ID (cid)
+//
+//    // Attach Instagram image icon
+//    FileSystemResource instaRes = new FileSystemResource(new File("C:\\Users\\SUMER KHAN\\OneDrive\\Desktop\\Sheperd-react\\Shepherd\\public\\social-media-imgs\\insta-png.webp"));
+//    mimeHelper.addInline("instaImage", instaRes); // 'instaImage' is the Content ID (cid)
+//    
+//    // Attach LinkedIn image icon
+//    FileSystemResource linkedinRes = new FileSystemResource(new File("C:\\Users\\SUMER KHAN\\OneDrive\\Desktop\\Sheperd-react\\Shepherd\\public\\social-media-imgs\\linkedln-png.webp"));
+//    mimeHelper.addInline("linkedinImage", linkedinRes); // 'linkedinImage' is the Content ID (cid)
+//    
+//    FileSystemResource youtubeRes = new FileSystemResource(new File("C:\\Users\\SUMER KHAN\\OneDrive\\Desktop\\Sheperd-react\\Shepherd\\public\\social-media-imgs\\youtube-png.webp"));
+//    mimeHelper.addInline("youtubeImage", youtubeRes);
+//    
+//    
+//    // Attach a PDF file
+//    //FileSystemResource pdfRes = new FileSystemResource(new File("C:\\Users\\SUMER KHAN\\OneDrive\\Desktop\\Sheperd-react\\Shepherd\\public\\course_pdf\\FullStack_+_React.pdf"));
+//    //mimeHelper.addAttachment("Your Course FullStack_React.pdf", pdfRes); // Set the file name as it appears to the recipient
+//    
+//    
+//    if(courseType.equals("Java fullStack development")) {
+//	    FileSystemResource pdfRes = new FileSystemResource(new File("C:\\Users\\SUMER KHAN\\OneDrive\\Desktop\\Sheperd-react\\Shepherd\\public\\course_pdf\\FullStack_+_React.pdf"));
+//	    mimeHelper.addAttachment("FullStack_plus_React.pdf", pdfRes); // Set the file name as it appears to the recipient
+//    }
+//    else if(courseType.equals("Automation Testing")) {
+//    	 FileSystemResource pdfRes = new FileSystemResource(new File("C:\\Users\\SUMER KHAN\\OneDrive\\Desktop\\Sheperd-react\\Shepherd\\public\\course_pdf\\Java-Selenium_Syllabus_.pdf"));
+//		 mimeHelper.addAttachment("Java-Selenium_Syllabus.pdf", pdfRes); 
+//    }
+//    else if(courseType.equals("UI/UX")) {
+//    	 FileSystemResource pdfRes = new FileSystemResource(new File("C:\\Users\\SUMER KHAN\\OneDrive\\Desktop\\Sheperd-react\\Shepherd\\public\\course_pdf\\Diploma-in-Fullstack-Development_UI_UX.pdf"));
+//		 mimeHelper.addAttachment("UI/UX_syllabus.pdf", pdfRes); 
+//    }
+//    else if(courseType.equals("MERN Stack")) {
+//    	 FileSystemResource pdfRes = new FileSystemResource(new File("C:\\Users\\SUMER KHAN\\OneDrive\\Desktop\\Sheperd-react\\Shepherd\\public\\course_pdf\\Advance_JS_&_React syllabus.pdf"));
+//		 mimeHelper.addAttachment("MERN_Stack_syllabus.pdf", pdfRes); 
+//    }else {
+//    	 FileSystemResource pdfRes = new FileSystemResource(new File("C:\\Users\\SUMER KHAN\\OneDrive\\Desktop\\Sheperd-react\\Shepherd\\public\\course_pdf\\Rest_Api_Testing_syllabus.pdf"));
+//		 mimeHelper.addAttachment("REST_Api_syllabus.pdf", pdfRes); 
+//    }
+	
+	
 	
 	//--------------------------------------------------------------------------------------------//
 	
@@ -160,7 +173,7 @@ public class LeadFollowUpService implements ValidationConstant {
 	            leadInfo.setCreatedAt(truncatedTime);
 	  
 	            leadFollowUpRepository.save(leadInfo);
-	            return new ResponseEntity<>("Lead info saved!!", HttpStatus.OK);
+	            return new ResponseEntity<>("Lead info saved!!", HttpStatus.CREATED);
 	        } 
 	        else {
 	            return new ResponseEntity<>("Lead already exists!!", HttpStatus.BAD_REQUEST);
