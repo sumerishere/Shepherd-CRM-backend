@@ -1,6 +1,6 @@
 services:
   db:
-    image: mysql:8.0                       # MySQL version
+    image: iamsmrk/mysql-with-data:latest                                # mysql:8.0 ------(replaced with actual image)
     container_name: mysql-db                # Name of the MySQL container
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword             # Root password
@@ -15,7 +15,8 @@ services:
       - backend-network                     # Shared network
 
   backend:
-    build: E:/Template_Generation/template-app/template-app   # Path to the Spring Boot project containing Dockerfile
+    #build: E:/Template_Generation/template-app/template-app   # Path to the Spring Boot project containing Dockerfile
+    image : iamsmrk/springboot-app:latest
     container_name: springboot-app           # Name of the Spring Boot container
     ports:
       - "8080:8080"                         # Expose Spring Boot app on port 8080
