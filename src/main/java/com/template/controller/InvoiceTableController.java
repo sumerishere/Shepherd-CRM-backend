@@ -1,14 +1,19 @@
 package com.template.controller;
 
+import java.io.IOException;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.template.invoiceDTO.InvoiceTableDTO;
 import com.template.model.InvoiceTable;
 import com.template.service.InvoiceTableService;
 
@@ -40,6 +45,19 @@ public class InvoiceTableController {
 	            invoicePdf.isEmpty()) {
 	            return new ResponseEntity<>("All fields are required and must be non-empty.", HttpStatus.BAD_REQUEST);
 	        }
+	        
+	        // Validate file type (ensure it's PDF)
+	        if (!invoicePdf.getContentType().equalsIgnoreCase("application/pdf")) {
+	            return new ResponseEntity<>("Only PDF files are allowed.", HttpStatus.BAD_REQUEST);
+	        }
+
+	        // Validate file size (limit to 5MB, for example)
+	        if (invoicePdf.getSize() > 5 * 1024 * 1024) {
+	            return new ResponseEntity<>("File size exceeds the 5MB limit.", HttpStatus.BAD_REQUEST);
+	        }
+	        
+	        // Log PDF size for debugging
+	        log.info("Received PDF size from frontend: " + invoicePdf.getSize());
 
 	        // If all fields are valid, proceed with saving the invoice
 	        InvoiceTable invoice = new InvoiceTable();
@@ -59,11 +77,21 @@ public class InvoiceTableController {
 
 	        return new ResponseEntity<>("Invoice saved successfully!", HttpStatus.OK);
 	    } 
+	    
+	    catch (IOException e) {
+	        log.error("Error processing invoice file", e);
+	        return new ResponseEntity<>("Failed to process the invoice PDF.", HttpStatus.INTERNAL_SERVER_ERROR);
+	    } 
 	    catch (Exception e) {
 	        return new ResponseEntity<>("Failed to save invoice", HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
-
-
+	
+	
+	
+	@GetMapping("/get-all-candidate")
+    public List<InvoiceTableDTO> getAllCandidates() {
+        return invoiceTableService.getAllCandidates();
+    }
 	
 }

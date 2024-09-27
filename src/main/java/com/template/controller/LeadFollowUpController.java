@@ -88,7 +88,7 @@ public class LeadFollowUpController {
 	
 	@GetMapping("/get-all-lead")
 	public ResponseEntity<?> getAllLead(){
-		return new ResponseEntity<>(leadFollowUpRepository.findAll(), HttpStatus.OK);
+		return new ResponseEntity<>(leadFollowUpRepository.findAll(), HttpStatus.CREATED);
 	}
 	
 	@GetMapping("/search-lead-name")
