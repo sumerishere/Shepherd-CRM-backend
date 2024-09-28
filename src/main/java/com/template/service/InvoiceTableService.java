@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -95,22 +96,29 @@ public class InvoiceTableService {
 
 		// Set the HTML content
 	    mimeHelper.setText(body, true); // true indicates HTML content
+	    
+	    
+	    mimeHelper.addInline("adminLogo", new ClassPathResource("static/Admin-img/logo.png"));
+	    mimeHelper.addInline("instaImage", new ClassPathResource("static/social-media-imgs/insta-png.webp"));
+	    mimeHelper.addInline("linkedinImage", new ClassPathResource("static/social-media-imgs/linkedln-png.webp"));
+	    mimeHelper.addInline("youtubeImage", new ClassPathResource("static/social-media-imgs/youtube-png.webp"));
 
-	    // Attach the course image
-	    FileSystemResource adminLogogRes = new FileSystemResource(new File("C:\\Users\\SUMER KHAN\\OneDrive\\Desktop\\Sheperd-react\\Shepherd\\public\\Admin-img\\logo.png"));
-	    mimeHelper.addInline("adminLogo", adminLogogRes); // 'courseImage' is the Content ID (cid)
 
-	    // Attach Instagram image icon
-	    FileSystemResource instaRes = new FileSystemResource(new File("C:\\Users\\SUMER KHAN\\OneDrive\\Desktop\\Sheperd-react\\Shepherd\\public\\social-media-imgs\\insta-png.webp"));
-	    mimeHelper.addInline("instaImage", instaRes); // 'instaImage' is the Content ID (cid)
-	    
-	    // Attach LinkedIn image icon
-	    FileSystemResource linkedinRes = new FileSystemResource(new File("C:\\Users\\SUMER KHAN\\OneDrive\\Desktop\\Sheperd-react\\Shepherd\\public\\social-media-imgs\\linkedln-png.webp"));
-	    mimeHelper.addInline("linkedinImage", linkedinRes); // 'linkedinImage' is the Content ID (cid)
-	    
-	    FileSystemResource youtubeRes = new FileSystemResource(new File("C:\\Users\\SUMER KHAN\\OneDrive\\Desktop\\Sheperd-react\\Shepherd\\public\\social-media-imgs\\youtube-png.webp"));
-	    mimeHelper.addInline("youtubeImage", youtubeRes);
-	    
+//	    // Attach the course image
+//	    FileSystemResource adminLogogRes = new FileSystemResource(new File("C:\\Users\\SUMER KHAN\\OneDrive\\Desktop\\Sheperd-react\\Shepherd\\public\\Admin-img\\logo.png"));
+//	    mimeHelper.addInline("adminLogo", adminLogogRes); // 'courseImage' is the Content ID (cid)
+//
+//	    // Attach Instagram image icon
+//	    FileSystemResource instaRes = new FileSystemResource(new File("C:\\Users\\SUMER KHAN\\OneDrive\\Desktop\\Sheperd-react\\Shepherd\\public\\social-media-imgs\\insta-png.webp"));
+//	    mimeHelper.addInline("instaImage", instaRes); // 'instaImage' is the Content ID (cid)
+//	    
+//	    // Attach LinkedIn image icon
+//	    FileSystemResource linkedinRes = new FileSystemResource(new File("C:\\Users\\SUMER KHAN\\OneDrive\\Desktop\\Sheperd-react\\Shepherd\\public\\social-media-imgs\\linkedln-png.webp"));
+//	    mimeHelper.addInline("linkedinImage", linkedinRes); // 'linkedinImage' is the Content ID (cid)
+//	    
+//	    FileSystemResource youtubeRes = new FileSystemResource(new File("C:\\Users\\SUMER KHAN\\OneDrive\\Desktop\\Sheperd-react\\Shepherd\\public\\social-media-imgs\\youtube-png.webp"));
+//	    mimeHelper.addInline("youtubeImage", youtubeRes);
+
 	    // Convert byte[] to ByteArrayResource for the PDF attachment
         ByteArrayResource pdfResource = new ByteArrayResource(pdfBytes);
 
