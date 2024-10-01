@@ -26,6 +26,11 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/templategen   # Reference MySQL as 'db'
       SPRING_DATASOURCE_USERNAME: myuser                         # Database username
       SPRING_DATASOURCE_PASSWORD: mypassword                       # Database password
+     
+    volumes: 
+      - /e/Template_Generation/template-app/template-app                         # Mount local directory to container's /app
+      - /app/target                                             # Ensure the 'target' directory is not overwritten by local files  
+      
     networks:
       - backend-network                     # Shared network
 

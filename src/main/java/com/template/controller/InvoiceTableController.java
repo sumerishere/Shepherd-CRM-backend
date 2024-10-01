@@ -79,11 +79,12 @@ public class InvoiceTableController {
 	    } 
 	    
 	    catch (IOException e) {
-	        log.error("Error processing invoice file", e);
+	        log.info("Error processing invoice file", e.getMessage());
 	        return new ResponseEntity<>("Failed to process the invoice PDF.", HttpStatus.INTERNAL_SERVER_ERROR);
 	    } 
 	    catch (Exception e) {
-	        return new ResponseEntity<>("Failed to save invoice", HttpStatus.INTERNAL_SERVER_ERROR);
+	    	log.info(e.getMessage());
+	        return new ResponseEntity<>("Failed to save invoice :"+e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
 	
