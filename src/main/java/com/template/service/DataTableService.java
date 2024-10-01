@@ -25,8 +25,10 @@ import com.template.repository.FormTemplateRepository;
 import com.template.validationConstant.ValidationConstant;
 
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class DataTableService implements ValidationConstant {
 	
 	@Autowired
@@ -44,56 +46,56 @@ public class DataTableService implements ValidationConstant {
 	
 	
 	
-	@Transactional
-	public ResponseEntity<?> saveFormData(FormDataRequest formDataRequest) {
-		
-	    Long formTemplateId = formDataRequest.getFormTemplateId();
-	    JsonNode formData = formDataRequest.getFormData();
-
-	    try {
-	        // Retrieve the FormTemplate
-	        FormTemplate formTemplate = formTemplateRepository.findById(formTemplateId)
-	                .orElseThrow(() -> new RuntimeException("FormTemplate not found"));
-
-	        // Extract expected column names from the formTemplate fields
-	        JsonNode fields = formTemplate.getFields();
-	        
-	        Set<String> expectedColumnNames = new HashSet<>();
-	        
-	        if (fields.isArray()) {
-	            for (JsonNode field : fields) {
-	                String columnName = field.get("columnName").asText();
-	                expectedColumnNames.add(columnName.toLowerCase());
-	            }
-	        }
-
-	        // Validate the formData keys
-	        Iterator<String> fieldNames = formData.fieldNames();
-	        
-	        while (fieldNames.hasNext()) {
-	        	
-	            String fieldName = fieldNames.next().toLowerCase();
-	            
-	            if (!expectedColumnNames.contains(fieldName)) {
-	                return new ResponseEntity<>("Invalid field: " + fieldName, HttpStatus.BAD_REQUEST);
-	            }
-	        }
-
-	        // All keys are valid, proceed to save data
-	        DataTable dataTable = new DataTable();
-	        
-	        dataTable.setFormTemplate(formTemplate);
-	        dataTable.setFieldsData(formData);
-	        
-	        dataTableRepository.save(dataTable);
-
-	        return new ResponseEntity<>("Data saved successfully!", HttpStatus.CREATED);
-	    } 
-	    catch (Exception e) {
-	        e.printStackTrace();
-	        return new ResponseEntity<>("Bad request", HttpStatus.BAD_REQUEST);
-	    }
-	}
+//	@Transactional
+//	public ResponseEntity<?> saveFormData(FormDataRequest formDataRequest) {
+//		
+//	    Long formTemplateId = formDataRequest.getFormTemplateId();
+//	    JsonNode formData = formDataRequest.getFormData();
+//
+//	    try {
+//	        // Retrieve the FormTemplate
+//	        FormTemplate formTemplate = formTemplateRepository.findById(formTemplateId)
+//	                .orElseThrow(() -> new RuntimeException("FormTemplate not found"));
+//
+//	        // Extract expected column names from the formTemplate fields
+//	        JsonNode fields = formTemplate.getFields();
+//	        
+//	        Set<String> expectedColumnNames = new HashSet<>();
+//	        
+//	        if (fields.isArray()) {
+//	            for (JsonNode field : fields) {
+//	                String columnName = field.get("columnName").asText();
+//	                expectedColumnNames.add(columnName.toLowerCase());
+//	            }
+//	        }
+//
+//	        // Validate the formData keys
+//	        Iterator<String> fieldNames = formData.fieldNames();
+//	        
+//	        while (fieldNames.hasNext()) {
+//	        	
+//	            String fieldName = fieldNames.next().toLowerCase();
+//	            
+//	            if (!expectedColumnNames.contains(fieldName)) {
+//	                return new ResponseEntity<>("Invalid field: " + fieldName, HttpStatus.BAD_REQUEST);
+//	            }
+//	        }
+//
+//	        // All keys are valid, proceed to save data
+//	        DataTable dataTable = new DataTable();
+//	        
+//	        dataTable.setFormTemplate(formTemplate);
+//	        dataTable.setFieldsData(formData);
+//	        
+//	        dataTableRepository.save(dataTable);
+//
+//	        return new ResponseEntity<>("Data saved successfully!", HttpStatus.CREATED);
+//	    } 
+//	    catch (Exception e) {
+//	        e.printStackTrace();
+//	        return new ResponseEntity<>("Bad request", HttpStatus.BAD_REQUEST);
+//	    }
+//	}
 	
 	
 	//--------image and pdf pending --------//
@@ -101,6 +103,7 @@ public class DataTableService implements ValidationConstant {
 	
 //	@Transactional
 //	public ResponseEntity<?> saveFormData(FormDataRequest formDataRequest, MultipartFile image, MultipartFile pdfFiles) {
+//		
 //	    Long formTemplateId = formDataRequest.getFormTemplateId();
 //	    JsonNode formData = formDataRequest.getFormData();
 //
@@ -156,6 +159,57 @@ public class DataTableService implements ValidationConstant {
 //	}
 
 	
+	
+	
+	@Transactional
+    public ResponseEntity<?> saveFormData(FormDataRequest formDataRequest) {
+        try {
+            // Retrieve the FormTemplate
+            FormTemplate formTemplate = formTemplateRepository.findById(formDataRequest.getFormTemplateId())
+                .orElseThrow(() -> new RuntimeException("FormTemplate not found"));
+
+            // Validate the formData keys (optional, remove if not needed)
+            JsonNode formData = formDataRequest.getFormData();
+            validateFormData(formTemplate, formData);
+
+            // Create and save the DataTable entity
+            DataTable dataTable = new DataTable();
+            dataTable.setFormTemplate(formTemplate);
+            dataTable.setFieldsData(formData);
+            dataTable.setImage(formDataRequest.getImage());
+            dataTable.setPdfFiles(formDataRequest.getPdfFiles());
+
+            dataTableRepository.save(dataTable);
+
+            return ResponseEntity.ok("Data saved successfully!");
+        } catch (Exception e) {
+            log.error("Error saving form data", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Error saving form data: " + e.getMessage());
+        }
+    }
+
+    private void validateFormData(FormTemplate formTemplate, JsonNode formData) {
+        // Extract expected column names from the formTemplate fields
+        JsonNode fields = formTemplate.getFields();
+        Set<String> expectedColumnNames = new HashSet<>();
+
+        if (fields.isArray()) {
+            for (JsonNode field : fields) {
+                String columnName = field.get("columnName").asText().toLowerCase();
+                expectedColumnNames.add(columnName);
+            }
+        }
+
+        // Validate the formData keys
+        Iterator<String> fieldNames = formData.fieldNames();
+        while (fieldNames.hasNext()) {
+            String fieldName = fieldNames.next().toLowerCase();
+            if (!expectedColumnNames.contains(fieldName)) {
+                throw new IllegalArgumentException("Invalid field: " + fieldName);
+            }
+        }
+    }
 	
 	
 	//------------------------------------------------------------------------------------------//
