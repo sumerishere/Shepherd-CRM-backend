@@ -31,6 +31,9 @@ public class User {
 
     @Column(name = "email", nullable = false)
     private String email;
+    
+    @Column(name ="organization_name", nullable = false)
+    private String organizationName;
 
     @Column(name = "user_name", nullable = false, unique = true)
     private String userName;
