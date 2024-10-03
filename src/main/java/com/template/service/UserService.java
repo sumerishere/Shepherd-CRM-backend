@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.template.BcryptPasswordEncoder.BcryptEncoderConfig;
@@ -14,7 +16,6 @@ import com.template.repository.CommentRepository;
 import com.template.repository.UserRepository;
 import com.template.validationConstant.ValidationConstant;
 
-import jakarta.transaction.Transactional;
 
 @Service
 public class UserService implements ValidationConstant{
@@ -36,7 +37,7 @@ public class UserService implements ValidationConstant{
 	
 	//--------------------------------------- user registration ( POST ) --------------------------------------------//
 	
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public ResponseEntity<?> saveUserInfo(User user, MultipartFile logo) {
 		  
         try {
@@ -75,6 +76,7 @@ public class UserService implements ValidationConstant{
             if (!user.getEmail().matches(EMAIL_PATTERN) || user.getEmail().isEmpty()) {
                 return new ResponseEntity<>("Valid Email is required!!", HttpStatus.BAD_REQUEST);
             }
+            
             
             if (user.getPassword() == null || user.getPassword().isEmpty()) {
                 return new ResponseEntity<>("Password is required!!", HttpStatus.BAD_REQUEST);
