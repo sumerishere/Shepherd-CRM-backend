@@ -39,75 +39,67 @@ public class UserService implements ValidationConstant{
 	
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	public ResponseEntity<?> saveUserInfo(User user, MultipartFile logo) {
-		  
-        try {
-        	
-        	if(!user.getFullName().matches(NAME_isVALID) || user.getFullName() == null || user.getFullName().isEmpty()) {
-        		return new ResponseEntity<>("Valid Name is required!!", HttpStatus.BAD_REQUEST);
-        	}
-        	
-        	if(!user.getAddress().matches(ADDRESS_isVALID) || user.getAddress() == null || user.getAddress().isEmpty()) {
-        		return new ResponseEntity<>("Valid address name is required!!", HttpStatus.BAD_REQUEST);
-        	}
-        	
-            // Validate required fields
-            if (user.getUserName() == null || user.getUserName().isEmpty()) {
-                return new ResponseEntity<>("Username is required", HttpStatus.BAD_REQUEST);
-            }
-            
-	           // Check if username already exists
-	           if (userRepository.findByUserName(user.getUserName()).isPresent()) {
-	               return new ResponseEntity<>("Username is already!! present, try another username", HttpStatus.BAD_REQUEST);
-	           }
-	           
-	            String userName = user.getUserName();   //check username validation.
-		   		char firstChar = userName.charAt(0);
-		   		
-		   		// Check if the first character is valid letter.
-		   		if (Character.isDigit(firstChar)) {
-		   			return new ResponseEntity<>("Username must start with english letter.", HttpStatus.BAD_REQUEST);
-		   		}
-            
-	            
-            if (!user.getMobileNumber().matches(MOBILE_NUMBER_PATTERN) || user.getMobileNumber().isEmpty()) {
-                return new ResponseEntity<>("Valid Mobile number is required!!", HttpStatus.BAD_REQUEST);
-            }
-            
-            if (!user.getEmail().matches(EMAIL_PATTERN) || user.getEmail().isEmpty()) {
-                return new ResponseEntity<>("Valid Email is required!!", HttpStatus.BAD_REQUEST);
-            }
-            
-            
-            if (user.getPassword() == null || user.getPassword().isEmpty()) {
-                return new ResponseEntity<>("Password is required!!", HttpStatus.BAD_REQUEST);
-            }
-            
-            if (user.getAddress() == null || user.getAddress().isEmpty()) {
-                return new ResponseEntity<>("Address is required!!", HttpStatus.BAD_REQUEST);
-            }
-
-            // Encode the password
-            String encodedPassword = passwordEncoder.encode(user.getPassword());
-            user.setPassword(encodedPassword);
-            
-            if (logo != null && !logo.isEmpty()) {
-                byte[] logoBytes = logo.getBytes();
-                user.setLogo(logoBytes);  // Set the logo byte[] in the user
-            }
-
-            // Save the user
-            userRepository.save(user);
-            
-	        return new ResponseEntity<>("User saved successfully", HttpStatus.CREATED);
-	            
-	        } 
-	        catch (Exception e) {
-	        	
-	            // Handle the exception as needed
-	            return new ResponseEntity<>("Error saving user: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-	            
+	    try {
+	        String validationError = validateUser(user);
+	        if (validationError != null) {
+	            return new ResponseEntity<>(validationError, HttpStatus.BAD_REQUEST);
 	        }
+
+	        // Check if username already exists
+	        if (userRepository.findByUserName(user.getUserName()).isPresent()) {
+	            return new ResponseEntity<>("Username is already present, try another username", HttpStatus.BAD_REQUEST);
+	        }
+
+	        // Encode the password
+	        String encodedPassword = passwordEncoder.encode(user.getPassword());
+	        user.setPassword(encodedPassword);
+
+	        // Handle logo
+	        if (logo != null && !logo.isEmpty()) {
+	            user.setLogo(logo.getBytes());
+	        }
+
+	        // Save the user
+	        userRepository.save(user);
+
+	        return new ResponseEntity<>("User saved successfully", HttpStatus.CREATED);
+	    } catch (Exception e) {
+	        return new ResponseEntity<>("Error saving user: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
+	}
+	
+	
+	//helper method for user validation
+	private String validateUser(User user) {
+	    if (isNullOrEmpty(user.getFullName()) || !user.getFullName().matches(NAME_isVALID)) {
+	        return "Valid Name is required!!";
+	    }
+	    if (isNullOrEmpty(user.getAddress()) || !user.getAddress().matches(ADDRESS_isVALID)) {
+	        return "Valid address name is required!!";
+	    }
+	    if (isNullOrEmpty(user.getUserName())) {
+	        return "Username is required";
+	    }
+	    if (!Character.isLetter(user.getUserName().charAt(0))) {
+	        return "Username must start with an English letter.";
+	    }
+	    if (isNullOrEmpty(user.getMobileNumber()) || !user.getMobileNumber().matches(MOBILE_NUMBER_PATTERN)) {
+	        return "Valid Mobile number is required!!";
+	    }
+	    if (isNullOrEmpty(user.getEmail()) || !user.getEmail().matches(EMAIL_PATTERN)) {
+	        return "Valid Email is required!!";
+	    }
+	    if (isNullOrEmpty(user.getPassword())) {
+	        return "Password is required!!";
+	    }
+	    return null; // No validation errors
+	}
+
+	private boolean isNullOrEmpty(String str) {
+	    return str == null || str.isEmpty();
+	}
+	
+	
 	//------------------------------------------------------------------------------------------//
 	
 	
