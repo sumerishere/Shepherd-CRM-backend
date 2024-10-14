@@ -26,8 +26,9 @@ import com.template.validationConstant.ValidationConstant;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
-
+@Slf4j
 @Service
 public class LeadFollowUpService implements ValidationConstant {
 	
@@ -103,50 +104,6 @@ public class LeadFollowUpService implements ValidationConstant {
 	    sender.send(mime);
 	}
 
-
-	
-	
-    // Attach the course image
-//    FileSystemResource adminLogogRes = new FileSystemResource(new File("C:\\Users\\SUMER KHAN\\OneDrive\\Desktop\\Sheperd-react\\Shepherd\\public\\Admin-img\\logo.png"));
-//    mimeHelper.addInline("adminLogo", adminLogogRes); // 'courseImage' is the Content ID (cid)
-//
-//    // Attach Instagram image icon
-//    FileSystemResource instaRes = new FileSystemResource(new File("C:\\Users\\SUMER KHAN\\OneDrive\\Desktop\\Sheperd-react\\Shepherd\\public\\social-media-imgs\\insta-png.webp"));
-//    mimeHelper.addInline("instaImage", instaRes); // 'instaImage' is the Content ID (cid)
-//    
-//    // Attach LinkedIn image icon
-//    FileSystemResource linkedinRes = new FileSystemResource(new File("C:\\Users\\SUMER KHAN\\OneDrive\\Desktop\\Sheperd-react\\Shepherd\\public\\social-media-imgs\\linkedln-png.webp"));
-//    mimeHelper.addInline("linkedinImage", linkedinRes); // 'linkedinImage' is the Content ID (cid)
-//    
-//    FileSystemResource youtubeRes = new FileSystemResource(new File("C:\\Users\\SUMER KHAN\\OneDrive\\Desktop\\Sheperd-react\\Shepherd\\public\\social-media-imgs\\youtube-png.webp"));
-//    mimeHelper.addInline("youtubeImage", youtubeRes);
-//    
-//    
-//    // Attach a PDF file
-//    //FileSystemResource pdfRes = new FileSystemResource(new File("C:\\Users\\SUMER KHAN\\OneDrive\\Desktop\\Sheperd-react\\Shepherd\\public\\course_pdf\\FullStack_+_React.pdf"));
-//    //mimeHelper.addAttachment("Your Course FullStack_React.pdf", pdfRes); // Set the file name as it appears to the recipient
-//    
-//    
-//    if(courseType.equals("Java fullStack development")) {
-//	    FileSystemResource pdfRes = new FileSystemResource(new File("C:\\Users\\SUMER KHAN\\OneDrive\\Desktop\\Sheperd-react\\Shepherd\\public\\course_pdf\\FullStack_+_React.pdf"));
-//	    mimeHelper.addAttachment("FullStack_plus_React.pdf", pdfRes); // Set the file name as it appears to the recipient
-//    }
-//    else if(courseType.equals("Automation Testing")) {
-//    	 FileSystemResource pdfRes = new FileSystemResource(new File("C:\\Users\\SUMER KHAN\\OneDrive\\Desktop\\Sheperd-react\\Shepherd\\public\\course_pdf\\Java-Selenium_Syllabus_.pdf"));
-//		 mimeHelper.addAttachment("Java-Selenium_Syllabus.pdf", pdfRes); 
-//    }
-//    else if(courseType.equals("UI/UX")) {
-//    	 FileSystemResource pdfRes = new FileSystemResource(new File("C:\\Users\\SUMER KHAN\\OneDrive\\Desktop\\Sheperd-react\\Shepherd\\public\\course_pdf\\Diploma-in-Fullstack-Development_UI_UX.pdf"));
-//		 mimeHelper.addAttachment("UI/UX_syllabus.pdf", pdfRes); 
-//    }
-//    else if(courseType.equals("MERN Stack")) {
-//    	 FileSystemResource pdfRes = new FileSystemResource(new File("C:\\Users\\SUMER KHAN\\OneDrive\\Desktop\\Sheperd-react\\Shepherd\\public\\course_pdf\\Advance_JS_&_React syllabus.pdf"));
-//		 mimeHelper.addAttachment("MERN_Stack_syllabus.pdf", pdfRes); 
-//    }else {
-//    	 FileSystemResource pdfRes = new FileSystemResource(new File("C:\\Users\\SUMER KHAN\\OneDrive\\Desktop\\Sheperd-react\\Shepherd\\public\\course_pdf\\Rest_Api_Testing_syllabus.pdf"));
-//		 mimeHelper.addAttachment("REST_Api_syllabus.pdf", pdfRes); 
-//    }
-	
 	
 	
 	//--------------------------------------------------------------------------------------------//
@@ -228,6 +185,7 @@ public class LeadFollowUpService implements ValidationConstant {
 	
 	
 	//--------------------------- Update lead info (PUT/UPDATE API) -----------------------------//
+	
 	@Transactional
 	public ResponseEntity<?> updateLead(Long uid, LeadFollowUp updatedLeadFollowUp, List<String> newComments) {
 		
@@ -290,54 +248,6 @@ public class LeadFollowUpService implements ValidationConstant {
 	    }
 	}
 
-
-
-	
-	
-//	public ResponseEntity<?> updateLead(Long uid, LeadFollowUp updatedLeadFollowUp, List<String> newComments) {
-//		
-//	    try {
-//	        // Fetch the existing LeadFollowUp entity by UID
-//	        LeadFollowUp leadFollowUp = leadFollowUpRepository.findById(uid)
-//	                .orElseThrow(() -> new RuntimeException("Lead not found with UID: " + uid));
-//
-//	        // Update the lead's information
-//	        leadFollowUp.setName(updatedLeadFollowUp.getName());
-//	        leadFollowUp.setEmail(updatedLeadFollowUp.getEmail());
-//	        leadFollowUp.setMobileNumber(updatedLeadFollowUp.getMobileNumber());
-//	        leadFollowUp.setAddress(updatedLeadFollowUp.getAddress());
-//
-//	        // Save the updated lead information
-//	        leadFollowUp = leadFollowUpRepository.save(leadFollowUp);
-//	        
-//	        // Store new comments
-//	        for (String commentText : newComments) {
-//	        	
-//	        	int commentLength = 151;  //consider comment length limit.
-//	            Comment comment = new Comment();  // Create a new Comment object for each comment
-//	            
-//	            if(commentText.length() < commentLength) {
-//	            	comment.setComment(commentText);
-//		            comment.setCreatedAt(LocalDateTime.now());
-//		            comment.setLeadFollowUp(leadFollowUp); // Associate the comment with the lead
-//		            
-//		            commentRepository.save(comment); // Save the newly created Comment
-//	            }
-//	            else {
-//	            	return new ResponseEntity<>("Comment length should be under the range(1-151)", HttpStatus.BAD_REQUEST);
-//	            }
-//	            
-//	        }
-//
-//	        // Return a success response with the updated lead
-//	        return new ResponseEntity<>("Lead updated successfully", HttpStatus.OK);
-//
-//	    } catch (Exception e) {
-//	        // Handle exceptions and return an error response
-//	        return new ResponseEntity<>("Error updating lead: " + e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
-//	               
-//	    }
-//	}
 	
 	//---------------------------------------------------------------------------------------------------//
 	 
@@ -415,22 +325,35 @@ public class LeadFollowUpService implements ValidationConstant {
 	
 	
 	
-	//---------------------------- search lead by name -----------------------------------------------//
+	//---------------------------- search lead by name & mobile number -----------------------------------------------//
 	
-	public ResponseEntity<List<?>> searchLeadByNameOrMobileNumber(String name, String mobileNumber) {
+	public ResponseEntity<List<?>> searchLeadByName(String name) {
 	    
 		if (name != null && !name.isEmpty()) {
 	        // Only name provided
 	        return new ResponseEntity<>(leadFollowUpRepository.searchByLeadName(name), HttpStatus.OK);
-	    } else if (mobileNumber != null && !mobileNumber.isEmpty()) {
-	        // Only mobile number provided
-	        return new ResponseEntity<>(leadFollowUpRepository.searchByMobileNumber(mobileNumber), HttpStatus.OK);
+	        
 	    } else {
 	        // Neither name nor mobile number provided, return empty result
 	        return new ResponseEntity<>(Collections.emptyList(), HttpStatus.OK);
 	    }
 	}
-
+	
+	
+	
+	
+	public ResponseEntity<List<?>> searchLeadByMobile(String mobileNumber) {
+		
+		if (mobileNumber != null && !mobileNumber.isEmpty()) {
+	        // Only mobile number provided
+	        return new ResponseEntity<>(leadFollowUpRepository.searchByMobileNumber(mobileNumber), HttpStatus.OK);
+		}
+		else {
+	        // Neither name nor mobile number provided, return empty result
+			log.info("-----> lead not found... <----");
+	        return new ResponseEntity<>(Collections.emptyList(), HttpStatus.OK);
+	    }
+	}
 	
 	//---------------------------------------------------------------------------------------------------//
 	

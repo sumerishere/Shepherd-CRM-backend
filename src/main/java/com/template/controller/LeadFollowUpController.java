@@ -92,8 +92,14 @@ public class LeadFollowUpController {
 	}
 	
 	@GetMapping("/search-lead-name")
-	public ResponseEntity<List<?>> searchLeadName(@RequestParam(value = "name", required = false) String name, @RequestParam(value = "mobile", required = false) String mobileNumber){
-		return leadFollowUpService.searchLeadByNameOrMobileNumber(name,mobileNumber);
+	public ResponseEntity<List<?>> searchLeadByName(@RequestParam("name")String name){
+		return leadFollowUpService.searchLeadByName(name);
 	}
+	
+	@GetMapping("/search-lead-mobile")
+	public ResponseEntity<List<?>> searchLeadByMobile(@RequestParam("mobileNumber")String mobileNumber ){
+		return leadFollowUpService.searchLeadByMobile(mobileNumber);
+	}
+	
 	
 }

@@ -101,64 +101,11 @@ public class FormTemplateService {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.valueToTree(fieldDTOList);
     }
-
-
-
 	
+    
+    
 	
-//	@Transactional
-//    public ResponseEntity<String> saveFormTemplate(FormTemplateDTO formTemplateDTO) {
-//        // Fetch the user by userName
-//        Optional<User> optionalUserObject = userRepository.findByUserName(formTemplateDTO.getUserName());
-//        
-//        
-//        if (optionalUserObject.isEmpty()) {
-//            return new ResponseEntity<>("Invalid userName: " + formTemplateDTO.getUserName(), HttpStatus.BAD_REQUEST);
-//        }
-//        
-//        User user = optionalUserObject.get();
-//        
-//        // Fetch the password using the native query
-//        String userPassword = userRepository.findPasswordByUserName(formTemplateDTO.getUserName());
-//        
-//
-//        // Validate required fields
-//        if (formTemplateDTO.getFormName() == null || formTemplateDTO.getFormName().isEmpty()) {
-//            return new ResponseEntity<>("Form name is required", HttpStatus.BAD_REQUEST);
-//        }
-//        if (formTemplateDTO.getCreatedAt() == null) {
-//            return new ResponseEntity<>("Creation date is required", HttpStatus.BAD_REQUEST);
-//        }
-//        if (formTemplateDTO.getFields() == null || formTemplateDTO.getFields().isEmpty()) {
-//            return new ResponseEntity<>("Fields are required", HttpStatus.BAD_REQUEST);
-//        }
-//        
-//        // Check if the username already exists in FormTemplateRepository
-//        List<FormTemplate> existingTemplates = formTemplateRepository.findAllByUser(user);
-//        if (!existingTemplates.isEmpty()) {
-//            return new ResponseEntity<>("User already has a form template", HttpStatus.CONFLICT);
-//        }
-//
-//        // Create FormTemplate entity
-//        FormTemplate formTemplate = new FormTemplate();
-//        formTemplate.setFormName(formTemplateDTO.getFormName());
-//        formTemplate.setCreatedAt(formTemplateDTO.getCreatedAt());
-//        formTemplate.setFields(formTemplateDTO.getFields());
-//        formTemplate.setUser(user);
-//        formTemplate.setPassword(userPassword); // Set the user's password
-//
-//        // Save the form template
-//        formTemplateRepository.save(formTemplate);
-//        
-//        createDynamicTable(formTemplateDTO);
-//        
-//        return new ResponseEntity<>("Form template saved successfully", HttpStatus.CREATED);
-//    }
-//	
-
-	
-	
-	//--------  dynamic table creation Logic ---------//
+	//--------  dynamic table creation Logic (removed approach) ---------//
 	
 	
 //	private void createDynamicTable(FormTemplateDTO formTemplateDTO) {

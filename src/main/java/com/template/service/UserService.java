@@ -119,7 +119,7 @@ public class UserService implements ValidationConstant{
 					return new ResponseEntity<>(userObject, HttpStatus.OK);
 				}
 				else {
-					return new ResponseEntity<>("password incorrect!!" ,HttpStatus.NOT_FOUND );
+					return new ResponseEntity<>("incorrect!! username and password, Please Try again.." ,HttpStatus.NOT_FOUND );
 				}
 			}
 		}
@@ -127,7 +127,7 @@ public class UserService implements ValidationConstant{
 			e.printStackTrace();
 		}
 		
-		return new ResponseEntity<>("incorrect!! username" ,HttpStatus.NOT_FOUND );
+		return new ResponseEntity<>("incorrect!! username and password, Please Try again.." ,HttpStatus.NOT_FOUND );
 	}
 	
 	//------------------------------------------------------------------------------------------//

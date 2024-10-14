@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.template.customIdGenerator.CustomIdGenerator;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -29,6 +30,8 @@ public class LeadFollowUp {
 	
 	private String name;
 	private String email;
+	
+	@Column(name="mobile_number")
 	private String mobileNumber;
 	private String address;
 	private String courseType;

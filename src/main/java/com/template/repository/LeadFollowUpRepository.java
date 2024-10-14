@@ -18,7 +18,7 @@ public interface LeadFollowUpRepository extends JpaRepository<LeadFollowUp, Long
 	@Query("SELECT lead FROM LeadFollowUp lead WHERE lead.name LIKE %:name%")
 	List<LeadFollowUp> searchByLeadName(@Param("name") String name);
 
-	@Query("SELECT lead FROM LeadFollowUp lead WHERE lead.mobileNumber LIKE %:mobileNumber%")
+	@Query("SELECT lead FROM LeadFollowUp lead WHERE lead.mobileNumber LIKE CONCAT('%', :mobileNumber, '%')")
 	List<LeadFollowUp> searchByMobileNumber(@Param("mobileNumber") String mobileNumber);
 
 }

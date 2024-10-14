@@ -43,6 +43,9 @@ public class User {
     
     @Column(name="Logo",columnDefinition = "LONGBLOB")
     private byte[] Logo;
+    
+    @Column(name="subscription_plan")
+    private String subscriptionPlan;
 
     
     //----- relatioship mapping -----//
