@@ -131,7 +131,29 @@ public class UserService implements ValidationConstant{
 	}
 	
 	//------------------------------------------------------------------------------------------//
-
+	
+	
+	
+	
+	//--------------------------- user data (GET API) --------------------------------//
+	
+	public ResponseEntity<?>  getUserData(String username){
+		
+		Optional<User>  user = userRepository.findByUserName(username);
+		
+		try {
+			if(user.isPresent()) {
+				return new ResponseEntity<>(user,HttpStatus.OK); 
+			}
+			else {
+				return new ResponseEntity<>(user,HttpStatus.BAD_REQUEST);
+			}
+		} catch (Exception e) {
+			return new ResponseEntity<>("internal server error", HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	//------------------------------------------------------------------------------------------//
 	
 	
 }

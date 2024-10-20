@@ -38,5 +38,10 @@ public class UserController {
 	public ResponseEntity<?> Login(@RequestParam("username") String userName, @RequestParam("password") String password){
 		return userService.Login(userName, password);
 	}
+	
+	@GetMapping("/get-user-data")
+	public ResponseEntity<?> getUserData(@RequestParam("username") String username){
+		return userService.getUserData(username);
+	}
 
 }

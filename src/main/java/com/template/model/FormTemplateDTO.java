@@ -79,6 +79,7 @@ public class FormTemplateDTO {
                 
                 fieldDTO.setColumnName(columnName);
                 fieldDTO.setDataType(dataType);
+                
                 fieldDTO.setFieldId(fieldId++); 
                 
                 fieldList.add(fieldDTO);

@@ -1,10 +1,7 @@
 package com.template.service;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
+
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -16,15 +13,13 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.template.BcryptPasswordEncoder.BcryptEncoderConfig;
-import com.template.model.FormField;
 import com.template.model.FormTemplate;
 import com.template.model.FormTemplateDTO;
 import com.template.model.User;
 import com.template.repository.CommentRepository;
 import com.template.repository.FormTemplateRepository;
 import com.template.repository.UserRepository;
-import java.sql.Statement;
-import java.util.Iterator;
+
 
 import jakarta.transaction.Transactional;
 
