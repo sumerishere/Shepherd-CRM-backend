@@ -19,7 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.template.formDataDTO.FormDataRequest;
 import com.template.formDataDTO.UpdateDataTableDTO;
 import com.template.model.DataTable;
@@ -39,56 +41,90 @@ public class DataTableController {
 	@Autowired
 	DataTableRepository dataTableRepository;
 	 
-	
-//	@PostMapping("/submit-form-data")
-//    public ResponseEntity<?> submitFormData(@RequestBody FormDataRequest formDataRequest) {
-//        return dataTableService.saveFormData(formDataRequest);
+		
+//	@PostMapping(value = "/submit-form-data", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//    public ResponseEntity<?> submitFormData(
+//            @RequestPart("formDataRequest") String formDataRequestJson,
+//            @RequestParam(required = false) Map<String, MultipartFile> files) {
+//
+//        try {
+//            ObjectMapper objectMapper = new ObjectMapper();
+//            FormDataRequest formDataRequest = objectMapper.readValue(formDataRequestJson, FormDataRequest.class);
+//
+//            // Process files if any
+//            if (files != null && !files.isEmpty()) {
+//                for (Map.Entry<String, MultipartFile> entry : files.entrySet()) {
+//                    MultipartFile file = entry.getValue();
+//                    String fileName = file.getOriginalFilename();
+//                    if (fileName != null) {
+//                        if (fileName.toLowerCase().endsWith(".pdf")) {
+//                            formDataRequest.setPdfFiles(file.getBytes());
+//                        } else if (fileName.toLowerCase().matches(".*\\.(jpg|jpeg|png|gif)$")) {
+//                            formDataRequest.setImage(file.getBytes());
+//                        }
+//                        // Add more conditions here if you need to handle other file types
+//                    }
+//                }
+//            }
+//
+//            log.info("Received form data: {}", formDataRequest);
+//            return dataTableService.saveFormData(formDataRequest);
+//
+//        } catch (Exception e) {
+//            log.error("Error processing request", e);
+//            return ResponseEntity.badRequest().body("Error processing request: " + e.getMessage());
+//        }
 //    }
 	
 	
-//	@PostMapping(value = "/submit-form-data", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-//	public ResponseEntity<?> submitFormData(
-//	        @RequestPart("formDataRequest") FormDataRequest formDataRequest,
-//	        @RequestPart(value = "image", required = false) MultipartFile image,
-//	        @RequestPart(value = "pdfFiles", required = false) MultipartFile pdfFiles) {
-//
-//	    return dataTableService.saveFormData(formDataRequest, image, pdfFiles);
-//	}
 	
-	 @PostMapping(value = "/submit-form-data", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	    public ResponseEntity<?> submitFormData(
-	            @RequestPart("formDataRequest") String formDataRequestJson,
-	            @RequestParam(required = false) Map<String, MultipartFile> files) {
+	@PostMapping(value = "/submit-form-data", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<?> submitFormData(
+	        @RequestPart("formDataRequest") String formDataRequestJson,
+	        @RequestParam(required = false) Map<String, MultipartFile> files) {
 
-	        try {
-	            ObjectMapper objectMapper = new ObjectMapper();
-	            FormDataRequest formDataRequest = objectMapper.readValue(formDataRequestJson, FormDataRequest.class);
+	    try {
+	        ObjectMapper objectMapper = new ObjectMapper();
+	        FormDataRequest formDataRequest = objectMapper.readValue(formDataRequestJson, FormDataRequest.class);
 
-	            // Process files if any
-	            if (files != null && !files.isEmpty()) {
-	                for (Map.Entry<String, MultipartFile> entry : files.entrySet()) {
-	                    MultipartFile file = entry.getValue();
-	                    String fileName = file.getOriginalFilename();
-	                    if (fileName != null) {
-	                        if (fileName.toLowerCase().endsWith(".pdf")) {
-	                            formDataRequest.setPdfFiles(file.getBytes());
-	                        } else if (fileName.toLowerCase().matches(".*\\.(jpg|jpeg|png|gif)$")) {
-	                            formDataRequest.setImage(file.getBytes());
-	                        }
-	                        // Add more conditions here if you need to handle other file types
+	        // Process files if any
+	        if (files != null && !files.isEmpty()) {
+	            for (Map.Entry<String, MultipartFile> entry : files.entrySet()) {
+	                MultipartFile file = entry.getValue();
+	                String fileName = file.getOriginalFilename();
+	                if (fileName != null) {
+	                    if (fileName.toLowerCase().endsWith(".pdf")) {
+	                        formDataRequest.setPdfFiles(file.getBytes());
+	                    } else if (fileName.toLowerCase().matches(".*\\.(jpg|jpeg|png|gif)$")) {
+	                        formDataRequest.setImage(file.getBytes());
 	                    }
 	                }
 	            }
-
-	            log.info("Received form data: {}", formDataRequest);
-	            return dataTableService.saveFormData(formDataRequest);
-
-	        } catch (Exception e) {
-	            log.error("Error processing request", e);
-	            return ResponseEntity.badRequest().body("Error processing request: " + e.getMessage());
 	        }
+
+	        // Extract the "dropdown" value from the formData
+	        JsonNode formData = formDataRequest.getFormData();
+	        ObjectNode updatedFormData = objectMapper.createObjectNode();
+	        formData.fields().forEachRemaining(entry -> {
+	            String fieldName = entry.getKey();
+	            JsonNode fieldValue = entry.getValue();
+	            if (fieldName.equals("dropdown")) {
+	                updatedFormData.put("dropdown", fieldValue.asText());
+	            } else {
+	                updatedFormData.set(fieldName, fieldValue);
+	            }
+	        });
+	        formDataRequest.setFormData(updatedFormData);
+
+	        log.info("Received form data: {}", formDataRequest);
+	        return dataTableService.saveFormData(formDataRequest);
+
+	    } catch (Exception e) {
+	        log.error("Error processing request", e);
+	        return ResponseEntity.badRequest().body("Error processing request: " + e.getMessage());
 	    }
-	
+	}
+
 	
 	
 	@GetMapping("/get-template-data/{templateId}")

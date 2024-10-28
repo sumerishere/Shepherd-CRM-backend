@@ -2,6 +2,7 @@ package com.template.service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -120,14 +121,19 @@ public class LeadFollowUpService implements ValidationConstant {
 	    try {
 	        if (!leadExist.isPresent()) {
 	        	
-	        	 // Get the current date and time
-	            LocalDateTime now = LocalDateTime.now();
-	            
-	            //This truncates the LocalDateTime to discard the seconds and nanoseconds, 
-	            //so only the year, month, day, hour, and minute parts are retained.
-	            LocalDateTime truncatedTime = now.truncatedTo(ChronoUnit.MINUTES);
-	            System.out.println("AssignTo: " + leadInfo.getAssignTo());
-	            leadInfo.setCreatedAt(truncatedTime);
+	        	 LocalDateTime now = LocalDateTime.now();
+	             
+	             //This truncates the LocalDateTime to discard the seconds and nanoseconds, 
+	             //so only the year, month, day, hour, and minute parts are retained.
+	             LocalDateTime truncatedTime = now.truncatedTo(ChronoUnit.MINUTES);
+	             
+	          // Define formatter to include AM/PM
+	             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm a");
+
+	             // Format truncated time with AM/PM
+	             String formattedTime = truncatedTime.format(formatter);
+	             
+	             leadInfo.setCreatedAt(formattedTime);
 	  
 	            leadFollowUpRepository.save(leadInfo);
 	            return new ResponseEntity<>("Lead info saved!!", HttpStatus.CREATED);

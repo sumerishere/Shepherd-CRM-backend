@@ -72,27 +72,50 @@ public class DataTableService implements ValidationConstant {
         }
     }
 
-    private void validateFormData(FormTemplate formTemplate, JsonNode formData) {
-        // Extract expected column names from the formTemplate fields
-        JsonNode fields = formTemplate.getFields();
-        Set<String> expectedColumnNames = new HashSet<>();
+//    private void validateFormData(FormTemplate formTemplate, JsonNode formData) {
+//        // Extract expected column names from the formTemplate fields
+//        JsonNode fields = formTemplate.getFields();
+//        Set<String> expectedColumnNames = new HashSet<>();
+//
+//        if (fields.isArray()) {
+//            for (JsonNode field : fields) {
+//                String columnName = field.get("columnName").asText().toLowerCase();
+//                expectedColumnNames.add(columnName);
+//            }
+//        }
+//
+//        // Validate the formData keys
+//        Iterator<String> fieldNames = formData.fieldNames();
+//        while (fieldNames.hasNext()) {
+//            String fieldName = fieldNames.next().toLowerCase();
+//            if (!expectedColumnNames.contains(fieldName)) {
+//                throw new IllegalArgumentException("Invalid field: " + fieldName);
+//            }
+//        }
+//    }
+	
+	
+	private void validateFormData(FormTemplate formTemplate, JsonNode formData) {
+	    // Extract expected column names from the formTemplate fields
+	    JsonNode fields = formTemplate.getFields();
+	    Set<String> expectedColumnNames = new HashSet<>();
 
-        if (fields.isArray()) {
-            for (JsonNode field : fields) {
-                String columnName = field.get("columnName").asText().toLowerCase();
-                expectedColumnNames.add(columnName);
-            }
-        }
+	    if (fields.isArray()) {
+	        for (JsonNode field : fields) {
+	            String columnName = field.get("columnName").asText().toLowerCase();
+	            expectedColumnNames.add(columnName);
+	        }
+	    }
 
-        // Validate the formData keys
-        Iterator<String> fieldNames = formData.fieldNames();
-        while (fieldNames.hasNext()) {
-            String fieldName = fieldNames.next().toLowerCase();
-            if (!expectedColumnNames.contains(fieldName)) {
-                throw new IllegalArgumentException("Invalid field: " + fieldName);
-            }
-        }
-    }
+	    // Validate the formData keys
+	    Iterator<String> fieldNames = formData.fieldNames();
+	    while (fieldNames.hasNext()) {
+	        String fieldName = fieldNames.next().toLowerCase();
+	        if (!expectedColumnNames.contains(fieldName) && !fieldName.equals("dropdown")) {
+	            throw new IllegalArgumentException("Invalid field: " + fieldName);
+	        }
+	    }
+	}
 	
 	
 	//------------------------------------------------------------------------------------------//

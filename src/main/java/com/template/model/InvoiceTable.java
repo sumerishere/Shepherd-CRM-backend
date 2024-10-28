@@ -1,5 +1,7 @@
 package com.template.model;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -19,6 +21,7 @@ public class InvoiceTable {
 	private String candidateMobile;
 	private String candidateMail;
 	private String organizationName;
+	private String invoiceCreatedAt;
 	
 	@Column(columnDefinition="LongBlob")
 	private byte[] invoicePdf;

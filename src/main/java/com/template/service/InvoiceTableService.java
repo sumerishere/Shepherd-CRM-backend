@@ -1,6 +1,9 @@
 package com.template.service;
 
 import java.io.File;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -121,7 +124,23 @@ public class InvoiceTableService {
 	//------------------- save invoice pdf with lead info (POST API) -------------------------//
 	
 	public ResponseEntity<String> saveInvoice(InvoiceTable invoiceTable) {
+		
 	    // Simply save the invoice, assuming validation is already done in the controller
+		 // Get the current date and time
+        LocalDateTime now = LocalDateTime.now();
+        
+        //This truncates the LocalDateTime to discard the seconds and nanoseconds, 
+        //so only the year, month, day, hour, and minute parts are retained.
+        LocalDateTime truncatedTime = now.truncatedTo(ChronoUnit.MINUTES);
+        
+     // Define formatter to include AM/PM
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm a");
+
+        // Format truncated time with AM/PM
+        String formattedTime = truncatedTime.format(formatter);
+        
+        invoiceTable.setInvoiceCreatedAt(formattedTime);
+        
 	    invoiceTableRepository.save(invoiceTable);
 	    return new ResponseEntity<>("Invoice data saved", HttpStatus.CREATED);
 	}
@@ -146,6 +165,7 @@ public class InvoiceTableService {
 	        dto.setCandidateMobile(invoice.getCandidateMobile());
 	        dto.setCandidateMail(invoice.getCandidateMail());
 	        dto.setOrganizationName(invoice.getOrganizationName());
+	        dto.setInvoiceCreatedAt(invoice.getInvoiceCreatedAt());
 	        
 	        return dto;
 	        

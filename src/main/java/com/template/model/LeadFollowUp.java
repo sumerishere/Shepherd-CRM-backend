@@ -1,6 +1,6 @@
 package com.template.model;
 
-import java.time.LocalDateTime;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +43,7 @@ public class LeadFollowUp {
 	private String assignTo;
 	private String statusType;
 	
-	private LocalDateTime createdAt;
+	private String createdAt;
 	
 	@OneToMany(mappedBy = "leadFollowUp", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference  //tell jackson to perform serialization mechanism on this entity and skip child serialization to avoid stackoverflow error and infinite recursion error.
