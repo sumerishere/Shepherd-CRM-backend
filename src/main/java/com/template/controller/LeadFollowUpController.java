@@ -1,8 +1,6 @@
 package com.template.controller;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,16 +12,17 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.template.ApiResponseClass.ApiResponse;
 import com.template.UserCommentDTO.LeadUpdateRequest;
 import com.template.model.LeadFollowUp;
 import com.template.repository.LeadFollowUpRepository;
 import com.template.service.LeadFollowUpService;
 
 import jakarta.mail.MessagingException;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
@@ -39,29 +38,40 @@ public class LeadFollowUpController {
 	LeadFollowUpRepository leadFollowUpRepository;
 	
 	
+	
 	@PostMapping("/save-lead")
-	public ResponseEntity<?> saveLead(@RequestBody LeadFollowUp leadInfo) throws MessagingException, IOException {
+    public ResponseEntity<ApiResponse> saveLead(@Valid @RequestBody LeadFollowUp leadInfo) {
 		
-		Optional<LeadFollowUp> leadExist = leadFollowUpRepository.findByEmail(leadInfo.getEmail());
-		
-		try {
-			if(!leadExist.isEmpty()) {
-				leadFollowUpService.saveLead(leadInfo);
-				
-				log.info("mail sending");
-				leadFollowUpService.leadMail(leadInfo.getName(), leadInfo.getEmail(), leadInfo.getCourseType());
-				log.info("mail sended successfully!!");
-				
-				return ResponseEntity.ok("Lead saved successfully.");
-			}
-			else {
-				return new ResponseEntity<>("Lead already exists!!", HttpStatus.BAD_REQUEST);
-			}
+        try {
+            boolean isSaved = leadFollowUpService.saveLead(leadInfo);
+            
+            if (isSaved) {
+            	
+                log.info("Mail sending");
+                leadFollowUpService.leadMail(leadInfo.getName(), leadInfo.getEmail(), leadInfo.getCourseType());
+                log.info("Mail sent successfully!!");
+                
+                return ResponseEntity.status(HttpStatus.CREATED)
+                		.body(new ApiResponse("Lead info saved!!", HttpStatus.CREATED));
+            } 
+            else {
+            	
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                                     .body(new ApiResponse("Lead already exists!!", HttpStatus.BAD_REQUEST));
+            }
         } 
-		catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-		}
-	}
+        catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                                 .body(new ApiResponse(e.getMessage(), HttpStatus.BAD_REQUEST));
+        } 
+        catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                 .body(new ApiResponse("Internal Server Error!! : " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR));
+        }
+    }
+	
+	
 	
 	
 	@GetMapping("/get-lead-by-id/{uid}")

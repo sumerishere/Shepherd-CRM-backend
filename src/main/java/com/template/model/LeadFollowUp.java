@@ -17,6 +17,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
@@ -28,10 +31,15 @@ public class LeadFollowUp {
     @GenericGenerator(name = "custom_id_generator",  type = CustomIdGenerator.class)
 	private Long UID;
 	
+	@NotNull(message = "Name is required!")
+	@Size(min = 2, max = 100, message = "Name must be between 2 and 100 characters")
 	private String name;
+	
+	@Email(message ="email is required!")
 	private String email;
 	
 	@Column(name="mobile_number")
+	@NotNull(message= "mobile no. is required!")
 	private String mobileNumber;
 	private String address;
 	private String courseType;

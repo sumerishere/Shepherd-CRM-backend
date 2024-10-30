@@ -4,13 +4,22 @@ import org.springframework.http.HttpStatus;
 
 
 public class ApiResponse {
+	
     private String message;
     private HttpStatus status;
     
     
     // Constructor, Getters, Setters
+    
     public ApiResponse() {}
     
+    
+    
+	public ApiResponse(String message, HttpStatus status) {
+		this.message = message;
+		this.status = status;
+	}
+
 	public String getMessage() {
 		return message;
 	}

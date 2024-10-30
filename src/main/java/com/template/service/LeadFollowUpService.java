@@ -18,6 +18,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import com.template.ApiResponseClass.ApiResponse;
 import com.template.model.Comment;
 import com.template.model.LeadFollowUp;
 import com.template.repository.CommentRepository;
@@ -114,44 +115,32 @@ public class LeadFollowUpService implements ValidationConstant {
 	
 	
 	//------------------------ save lead information ( POST API ) --------------------------//
-	
-	public ResponseEntity<?> saveLead(LeadFollowUp leadInfo) {
-	    Optional<LeadFollowUp> leadExist = leadFollowUpRepository.findByEmail(leadInfo.getEmail());
-	    
-	    try {
+		
+	 public boolean saveLead(LeadFollowUp leadInfo) {
+			log.debug("Processing lead creation request: {}", leadInfo);
+			
+	        Optional<LeadFollowUp> leadExist = leadFollowUpRepository.findByEmail(leadInfo.getEmail());
+	        
 	        if (!leadExist.isPresent()) {
 	        	
-	        	 LocalDateTime now = LocalDateTime.now();
-	             
-	             //This truncates the LocalDateTime to discard the seconds and nanoseconds, 
-	             //so only the year, month, day, hour, and minute parts are retained.
-	             LocalDateTime truncatedTime = now.truncatedTo(ChronoUnit.MINUTES);
-	             
-	          // Define formatter to include AM/PM
-	             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm a");
+	            // Set creation time with format of 12hr-am/pm
+	            LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
+	            
+	            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm a");
+	            
+	            String formattedTime = now.format(formatter);
+	            leadInfo.setCreatedAt(formattedTime);
 
-	             // Format truncated time with AM/PM
-	             String formattedTime = truncatedTime.format(formatter);
-	             
-	             leadInfo.setCreatedAt(formattedTime);
-	  
+	            // Save lead info
 	            leadFollowUpRepository.save(leadInfo);
-	            return new ResponseEntity<>("Lead info saved!!", HttpStatus.CREATED);
+	            return true; // Indicate success
 	        } 
 	        else {
-	            return new ResponseEntity<>("Lead already exists!!", HttpStatus.BAD_REQUEST);
+	            return false; // Indicate that the lead already exists
 	        }
-	    } 
-	    catch (Exception e) {
-	        e.printStackTrace();
-	        return new ResponseEntity<>("Internal Server Error!! : " + e, HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
-	}
-
 	
 	//--------------------------------------------------------------------------------------------//
-	
-	
 	
 	
 	
@@ -171,13 +160,16 @@ public class LeadFollowUpService implements ValidationConstant {
 				return new ResponseEntity<> (leadObject,HttpStatus.OK);
 			}
 			else {
-				return new ResponseEntity<>("Opps.. Lead ID-"+uid+" Not Found!!", HttpStatus.BAD_REQUEST);
+				return new ResponseEntity<>
+					       ( new ApiResponse("Opps.. Lead ID-"+uid+" Not Found!!", HttpStatus.BAD_REQUEST), HttpStatus.BAD_REQUEST);
 			}
 			
 		} 
 		catch (Exception e) {
+			
 			e.printStackTrace();
-			return new ResponseEntity<>("Internal Server Error!! : "+e, HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>
+						  (new ApiResponse("Internal Server Error!! : "+e, HttpStatus.INTERNAL_SERVER_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 			
 	}

@@ -1,17 +1,17 @@
 {"properties": [
   {
-    "name": "file.upload-dir",
+    "name": "management.endpoints.jmx.exposure.include",
     "type": "java.lang.String",
-    "description": "A description for 'file.upload-dir'"
+    "description": "A description for 'management.endpoints.jmx.exposure.include'"
   },
   {
-    "name": "twilio.whatsapp-number",
+    "name": "java",
     "type": "java.lang.String",
-    "description": "A description for 'twilio.whatsapp-number'"
+    "description": "A description for 'java'"
   },
   {
-    "name": "twilio.account-sid",
+    "name": "management.endpoints.jmx.exposure.include",
     "type": "java.lang.String",
-    "description": "A description for 'twilio.account-sid'"
+    "description": "A description for 'management.endpoints.jmx.exposure.include'"
   }
 ]}
