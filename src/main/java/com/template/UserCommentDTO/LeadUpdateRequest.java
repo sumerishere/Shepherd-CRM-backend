@@ -7,7 +7,8 @@ import java.util.List;
 
 @Data
 public class LeadUpdateRequest {
+	
     private LeadFollowUp leadFollowUp;
-//    private List<Comment> commentObjects; // For Comment objects
+
     private List<String> comments;
 }

@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.template.ApiResponseClass.ApiResponse;
+import com.template.UserCommentDTO.InvalidCommentException;
 import com.template.UserCommentDTO.LeadUpdateRequest;
+import com.template.globalException.LeadNotFoundException;
 import com.template.model.LeadFollowUp;
 import com.template.repository.LeadFollowUpRepository;
 import com.template.service.LeadFollowUpService;
@@ -80,11 +82,42 @@ public class LeadFollowUpController {
 	}
 	
 	
+//	@PutMapping("/update-lead-by-id/{uid}")
+//	public ResponseEntity<?> updateLead(@PathVariable("uid") Long uid,@RequestBody LeadUpdateRequest request) {
+//		 System.out.println("LeadUpdateRequest payload: " + request);
+//		return leadFollowUpService.updateLead(uid, request.getLeadFollowUp(), request.getComments());         
+//	}
+	
 	@PutMapping("/update-lead-by-id/{uid}")
-	public ResponseEntity<?> updateLead(@PathVariable("uid") Long uid,@RequestBody LeadUpdateRequest request) {
-		 System.out.println("LeadUpdateRequest payload: " + request);
-		return leadFollowUpService.updateLead(uid, request.getLeadFollowUp(), request.getComments());         
-	}
+	public ResponseEntity<ApiResponse> updateLead(@PathVariable Long uid, @RequestBody LeadUpdateRequest request) {
+        log.info("Received update request for lead ID: {}", uid);
+        
+        try {
+            
+        	leadFollowUpService.updateLead(uid, request.getLeadFollowUp(), request.getComments());
+            
+            return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse("Lead updated successfully",HttpStatus.OK));
+                
+        } catch (LeadNotFoundException e) {
+        	
+            log.error("Lead not found: {}", e.getMessage());
+            
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(), HttpStatus.NOT_FOUND));
+                    
+        } catch (InvalidCommentException e) {
+        	
+            log.error("Invalid comment: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(new ApiResponse(e.getMessage(), HttpStatus.BAD_REQUEST));
+                    
+        } catch (Exception e) {
+            log.error("Error updating lead", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ApiResponse(
+                    "An unexpected error occurred while updating the lead", HttpStatus.INTERNAL_SERVER_ERROR));
+        }
+    }
+	
+		
 	
 	
 	@PutMapping("/update-followup/{uid}")
