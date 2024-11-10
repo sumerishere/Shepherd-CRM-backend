@@ -52,4 +52,24 @@ public class User {
     
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<FormTemplate> formTemplates;
+    
+    public User() {}
+
+	public User(Long id, String fullName, String address, String mobileNumber, String email, String organizationName,
+			String userName, String password, byte[] logo, String subscriptionPlan, Set<FormTemplate> formTemplates) {
+		super();
+		this.id = id;
+		this.fullName = fullName;
+		this.address = address;
+		this.mobileNumber = mobileNumber;
+		this.email = email;
+		this.organizationName = organizationName;
+		this.userName = userName;
+		this.password = password;
+		Logo = logo;
+		this.subscriptionPlan = subscriptionPlan;
+		this.formTemplates = formTemplates;
+	}
+    
+    
 }

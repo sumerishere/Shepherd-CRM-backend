@@ -1,8 +1,8 @@
 package com.template.service;
 
+import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -12,7 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.template.BcryptPasswordEncoder.BcryptEncoderConfig;
 import com.template.model.User;
-import com.template.repository.CommentRepository;
 import com.template.repository.UserRepository;
 import com.template.validationConstant.ValidationConstant;
 
@@ -20,25 +19,21 @@ import com.template.validationConstant.ValidationConstant;
 @Service
 public class UserService implements ValidationConstant{
 	
-	@Autowired
-	UserRepository userRepository;
+	private final UserRepository userRepository;
+	private final BcryptEncoderConfig passwordEncoder;   
 	
-	@Autowired
-	CommentRepository commentRepository;
 	
-
-	@Autowired
-	private final BcryptEncoderConfig passwordEncoder;     //imported password encoder to store real password as hashed value in DB.
-	
-	public UserService(BcryptEncoderConfig passwordEncoder) {
+	public UserService(UserRepository userRepository, BcryptEncoderConfig passwordEncoder) {
+		this.userRepository = userRepository;
 		this.passwordEncoder = passwordEncoder;
+		
 	}
 	
 	
 	//--------------------------------------- user registration ( POST ) --------------------------------------------//
 	
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
-	public ResponseEntity<?> saveUserInfo(User user, MultipartFile logo) {
+	public ResponseEntity<String> saveUserInfo(User user, MultipartFile logo) {
 	    try {
 	        String validationError = validateUser(user);
 	        if (validationError != null) {
@@ -154,6 +149,12 @@ public class UserService implements ValidationConstant{
 	}
 	
 	//------------------------------------------------------------------------------------------//
+	
+	
+	
+	public List<User> getAllUsers(){
+		return userRepository.findAll();
+	}
 	
 	
 }

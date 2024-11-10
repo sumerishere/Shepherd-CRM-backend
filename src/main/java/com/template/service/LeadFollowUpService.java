@@ -9,11 +9,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-//import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -34,14 +32,19 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class LeadFollowUpService implements ValidationConstant {
 	
-	@Autowired
-	LeadFollowUpRepository leadFollowUpRepository;
+	private  final LeadFollowUpRepository leadFollowUpRepository;
+	private  final CommentRepository commentRepository;
+	private  final JavaMailSender sender;
 	
-	@Autowired
-	CommentRepository commentRepository;
-
-	@Autowired
-	JavaMailSender sender;
+	//constructor injection instead of field.
+	public LeadFollowUpService(LeadFollowUpRepository leadFollowUpRepository,CommentRepository commentRepository,JavaMailSender sender) {
+		
+		this.leadFollowUpRepository = leadFollowUpRepository;
+		this.commentRepository = commentRepository;
+		this.sender = sender;
+		
+	}
+	
 	
 	
 	//---------------------------------------- Lead Mail sending API ----------------------------------------------------//
@@ -328,7 +331,9 @@ public class LeadFollowUpService implements ValidationConstant {
 	
 	
 	
-	//---------------------------- search lead by name & mobile number -----------------------------------------------//
+	//---------------------------- search lead by name & mobile number (GET API)-----------------------------------------------//
+	
+	      //-------- search by name ----------//
 	
 	public ResponseEntity<List<?>> searchLeadByName(String name) {
 	    
@@ -343,7 +348,7 @@ public class LeadFollowUpService implements ValidationConstant {
 	}
 	
 	
-	
+              //------ search by mobile number --------//
 	
 	public ResponseEntity<List<?>> searchLeadByMobile(String mobileNumber) {
 		

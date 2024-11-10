@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.hibernate.annotations.GenericGenerator;
 
-//import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.template.customIdGenerator.CustomIdGenerator;
 

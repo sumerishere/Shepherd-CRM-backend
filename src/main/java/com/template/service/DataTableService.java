@@ -7,20 +7,16 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.template.formDataDTO.FormDataRequest;
 import com.template.formDataDTO.UpdateDataTableDTO;
 import com.template.model.DataTable;
 import com.template.model.FormTemplate;
 import com.template.repository.DataTableRepository;
-import com.template.repository.FormFieldDataRepository;
 import com.template.repository.FormTemplateRepository;
 import com.template.validationConstant.ValidationConstant;
 
@@ -31,16 +27,14 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class DataTableService implements ValidationConstant {
 	
-	@Autowired
-	DataTableRepository dataTableRepository;
-	
-	@Autowired
-	FormTemplateRepository formTemplateRepository;
-	
-	@Autowired
-	FormFieldDataRepository formFieldDataRepository;
+	private final DataTableRepository dataTableRepository;
+	private final FormTemplateRepository formTemplateRepository;
 	
 	
+	public DataTableService(DataTableRepository dataTableRepository, FormTemplateRepository formTemplateRepository) {
+		this.dataTableRepository = dataTableRepository;
+		this.formTemplateRepository = formTemplateRepository;
+	}
 	
 	//------------------------ Save user information ( POST )-------------------------//	
 	
@@ -63,8 +57,8 @@ public class DataTableService implements ValidationConstant {
             dataTable.setPdfFiles(formDataRequest.getPdfFiles());
 
             dataTableRepository.save(dataTable);
-
             return ResponseEntity.ok("Data saved successfully!");
+            
         } catch (Exception e) {
             log.error("Error saving form data", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -152,7 +146,6 @@ public class DataTableService implements ValidationConstant {
 	
 	
 	
-	
 	//------------------------ get particular user-info by uid (GET API) ------------------------------//
 	
 	public ResponseEntity<?> getUserByUID(Long uid){
@@ -170,7 +163,6 @@ public class DataTableService implements ValidationConstant {
 		} 
 		catch (Exception e) {
 			e.printStackTrace();
-			// TODO: handle exception
 		}
 		
 		return new ResponseEntity<> ("Opps..! user uid not found", HttpStatus.BAD_REQUEST);
@@ -235,7 +227,7 @@ public class DataTableService implements ValidationConstant {
 	            return new ResponseEntity<>("User info updated successfully!", HttpStatus.CREATED);
 	        } 
 	        else {
-	            throw new RuntimeException("DataTable with UID " + updateDataTableDTO.getUid() + " not found");
+	            throw new IllegalArgumentException("DataTable with UID " + updateDataTableDTO.getUid() + " not found");
 	        }
 	    } 
 	    catch (Exception e) {
@@ -296,8 +288,6 @@ public class DataTableService implements ValidationConstant {
 	}
   }
 	
-	
-
   //------------------------------------------------------------------------------------------//
 
 }

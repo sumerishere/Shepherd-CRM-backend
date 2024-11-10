@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.template.ApiResponseClass.ApiResponse;
-import com.template.UserCommentDTO.InvalidCommentException;
+import com.template.userCommentDTO.InvalidCommentException;
 
 import lombok.extern.slf4j.Slf4j;
 

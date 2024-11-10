@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -16,31 +15,29 @@ import com.template.BcryptPasswordEncoder.BcryptEncoderConfig;
 import com.template.model.FormTemplate;
 import com.template.model.FormTemplateDTO;
 import com.template.model.User;
-import com.template.repository.CommentRepository;
 import com.template.repository.FormTemplateRepository;
 import com.template.repository.UserRepository;
 
 
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class FormTemplateService {
 	
-	
-	@Autowired
-	FormTemplateRepository formTemplateRepository;
-	
-	@Autowired
-	UserRepository  userRepository;
-	
-	@Autowired
-	CommentRepository commentRepository;
-	
-	@Autowired
+	private final FormTemplateRepository formTemplateRepository;
+	private final UserRepository  userRepository;
 	private final BcryptEncoderConfig passwordEncoder;     //imported password encoder to store real password as hashed value in DB.
 	
-	public FormTemplateService(BcryptEncoderConfig passwordEncoder) {
+	
+	public FormTemplateService(FormTemplateRepository formTemplateRepository,
+			                      UserRepository  userRepository,BcryptEncoderConfig passwordEncoder) {
+		
+		this.formTemplateRepository  = formTemplateRepository;
+		this.userRepository = userRepository;
 		this.passwordEncoder = passwordEncoder;
+		
 	}
 	
 	
@@ -53,9 +50,9 @@ public class FormTemplateService {
         if (optionalUserObject.isEmpty()) {
             return new ResponseEntity<>("Invalid userName: " + formTemplateDTO.getUserName(), HttpStatus.BAD_REQUEST);
         }
-
+        
         User user = optionalUserObject.get();
-
+        
         // Fetch the password using the native query
         String userPassword = userRepository.findPasswordByUserName(formTemplateDTO.getUserName());
 
@@ -85,9 +82,8 @@ public class FormTemplateService {
         formTemplate.setPassword(userPassword); // Set the user's password
 
         // Save the form template
+        log.info("formtemplate saved succesfully!!!");
         formTemplateRepository.save(formTemplate);
-
-        // You can add additional logic here if needed
 
         return new ResponseEntity<>("Form template saved successfully", HttpStatus.CREATED);
     }
@@ -97,87 +93,7 @@ public class FormTemplateService {
         return mapper.valueToTree(fieldDTOList);
     }
 	
-    
-    
-	
-	//--------  dynamic table creation Logic (removed approach) ---------//
-	
-	
-//	private void createDynamicTable(FormTemplateDTO formTemplateDTO) {
-//		
-//	    JsonNode fields = formTemplateDTO.getFields();
-//	    
-//	    StringBuilder createTableQuery = new StringBuilder();
-//	    
-//	    // Ensure table name is properly formatted
-//	    String tableName = formTemplateDTO.getFormName().replaceAll("\\s+", "_");
-//	    
-//	    createTableQuery.append("CREATE TABLE `").append(tableName).append("` (");
-//	    createTableQuery.append("`id` INT AUTO_INCREMENT PRIMARY KEY, ");
-//
-//	    Iterator<Map.Entry<String, JsonNode>> fieldsIterator = fields.fields();
-//	    
-//	    while (fieldsIterator.hasNext()) {
-//	    	
-//	        Map.Entry<String, JsonNode> field = fieldsIterator.next();
-//	        
-//	        String fieldName = field.getKey();
-//	        String fieldType = mapFieldType(field.getValue().asText());
-//	        
-//	        createTableQuery.append("`").append(fieldName).append("` ").append(fieldType);
-//	        
-//	        if (fieldsIterator.hasNext()) {
-//	            createTableQuery.append(", ");
-//	        }
-//	    }
-//	        createTableQuery.append(")");
-//
-//	        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/template_created_db", "root", "root");
-//	        		
-//	            Statement statement = connection.createStatement()) {
-//	            statement.executeUpdate(createTableQuery.toString());
-//	        } 
-//	        catch (Exception e) {
-//	            e.printStackTrace();
-//	            // Handle exceptions properly in a real-world application
-//	        }
-//	    }
-//
-//	    private String mapFieldType(String jsonType) {
-//	    	
-//	        switch (jsonType) {
-//	        
-//	            case "Text(String)":
-//	                return "VARCHAR(255)";
-//	                
-//	            case "Number(int)":
-//	                return "INT";
-//	                
-//	            case "Yes/No button(Radio)":
-//	                
-//	            	return "VARCHAR(3)";
-//	            	
-//	            case "Yes/No check(checkbox)":
-//	                
-//	            	return "VARCHAR(3)";	
-//	            	
-//	            case "Image":
-//	            	return "LONGBLOB";
-//	            	
-//	            case "Pdf File":
-//	            	return "LONGBLOB";
-//	            	
-//	            	//Add more mappings as needed
-//	            	
-//	            default:
-//	            	
-//	                throw new IllegalArgumentException("Unsupported field type: " + jsonType);
-//	        }
-//	    }
-	
-	
-	
-	
+    	
 	//-----------------------------------------------------------------------------------------//
 	    
 	private FormTemplateDTO convertToDTO(FormTemplate formTemplate) {
@@ -203,6 +119,7 @@ public class FormTemplateService {
             List<FormTemplateDTO> templateDTOs = formTemplateRepository.findAllByUser(userCheck.get()).stream()
                     .map(this::convertToDTO).collect(Collectors.toList());
             
+            log.info("get all templateDTOs");
             return new ResponseEntity<>(templateDTOs, HttpStatus.OK);
         } 
         else {
@@ -216,13 +133,14 @@ public class FormTemplateService {
     
     public ResponseEntity<?> getTemplateByUsername(String userName ){
     	
-    	Optional<User> OptionalUserObject = userRepository.findByUserName(userName);
+    	Optional<User> optionalUserObject = userRepository.findByUserName(userName);
     	try {
-    		if(OptionalUserObject.isPresent() ) {
-    			User  user = OptionalUserObject.get();
+    		if(optionalUserObject.isPresent() ) {
+    			User  user = optionalUserObject.get();
     			
     			List<FormTemplate> templateObject =  formTemplateRepository.findAllByUser(user);
     			
+                log.info("get template by username");
     			return new ResponseEntity<>(templateObject, HttpStatus.OK);
     		}
     	}

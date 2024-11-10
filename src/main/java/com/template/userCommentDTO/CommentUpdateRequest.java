@@ -1,4 +1,4 @@
-package com.template.UserCommentDTO;
+package com.template.userCommentDTO;
 
 public class CommentUpdateRequest {
     private String comment;

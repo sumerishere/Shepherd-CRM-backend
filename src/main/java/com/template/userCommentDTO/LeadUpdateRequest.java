@@ -1,4 +1,4 @@
-package com.template.UserCommentDTO;
+package com.template.userCommentDTO;
 
 import com.template.model.LeadFollowUp;
 import lombok.Data;

@@ -1,16 +1,14 @@
 package com.template.service;
 
-import java.io.File;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -18,9 +16,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import com.template.invoiceDTO.InvoiceTableDTO;
-//import com.template.controller.ResponseEntiy;
 import com.template.model.InvoiceTable;
-import com.template.repository.DataTableRepository;
 import com.template.repository.InvoiceTableRepository;
 
 import jakarta.mail.MessagingException;
@@ -32,11 +28,14 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class InvoiceTableService {
 	
-	@Autowired
-	InvoiceTableRepository invoiceTableRepository;
+	private final InvoiceTableRepository invoiceTableRepository;
+	private final JavaMailSender sender;
 	
-	@Autowired
-	JavaMailSender sender;
+	
+	public InvoiceTableService(InvoiceTableRepository invoiceTableRepository, JavaMailSender sender) {
+		this.invoiceTableRepository = invoiceTableRepository;
+		this.sender = sender;
+	}
 	
 	
 	//----------------------------------- invoice mail api ---------------------------------------//
@@ -171,7 +170,6 @@ public class InvoiceTableService {
 	        
 	    }).collect(Collectors.toList());
 	}
-
 	
 	//-----------------------------------------------------------------------------------------//
 

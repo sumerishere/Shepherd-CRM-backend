@@ -1,4 +1,4 @@
-package com.template.UserCommentDTO;
+package com.template.userCommentDTO;
 
 public class InvalidCommentException extends RuntimeException {
     private static final long serialVersionUID = 1L;

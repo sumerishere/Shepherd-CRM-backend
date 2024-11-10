@@ -120,12 +120,33 @@
 	    </dependency>
 	    
 	    
-	<!-- <dependency>
+	   <dependency>
 		    <groupId>org.junit.jupiter</groupId>
 		    <artifactId>junit-jupiter-api</artifactId>
-		    <version>5.9.2</version>
 		    <scope>test</scope>
-		</dependency> -->
+		</dependency> 
+		
+		<dependency>
+		    <groupId>org.junit.jupiter</groupId>
+		    <artifactId>junit-jupiter-engine</artifactId>
+		    <scope>test</scope>
+		</dependency>
+		
+		
+		<dependency>
+	        <groupId>com.fasterxml.jackson.core</groupId>
+	        <artifactId>jackson-databind</artifactId>
+	    </dependency>
+	    
+	    <dependency>
+	        <groupId>com.fasterxml.jackson.core</groupId>
+	        <artifactId>jackson-core</artifactId>
+	    </dependency>
+	
+	    <dependency>
+	        <groupId>com.fasterxml.jackson.datatype</groupId>
+	        <artifactId>jackson-datatype-jsr310</artifactId> <!-- For Java 8 Date and Time API -->
+	    </dependency>
 		
 		<dependency>
 		    <groupId>org.springframework</groupId>
@@ -160,6 +181,14 @@
 	                <argLine>-Djdk.net.URLClassPath.disableClassPathURLCheck=true</argLine>
 	            </configuration>
 			</plugin> -->
+			
+			
+			 <!-- SonarQube Scanner for Maven -->
+	        <plugin>
+	            <groupId>org.sonarsource.scanner.maven</groupId>
+	            <artifactId>sonar-maven-plugin</artifactId>
+	            <version>3.8.0.2131</version>
+	        </plugin>
 
 		</plugins>
 	</build>

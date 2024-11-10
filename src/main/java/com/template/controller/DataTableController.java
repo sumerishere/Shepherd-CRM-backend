@@ -3,7 +3,6 @@ package com.template.controller;
 
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -18,14 +17,11 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.template.formDataDTO.FormDataRequest;
 import com.template.formDataDTO.UpdateDataTableDTO;
-import com.template.model.DataTable;
-import com.template.repository.DataTableRepository;
 import com.template.service.DataTableService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -35,11 +31,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class DataTableController {
 	
-	@Autowired
-	DataTableService dataTableService;
+	private final DataTableService dataTableService;
 	
-	@Autowired
-	DataTableRepository dataTableRepository;
+	public DataTableController(DataTableService dataTableService) {
+		this.dataTableService = dataTableService;
+	}
 	 
 		
 //	@PostMapping(value = "/submit-form-data", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

@@ -2,11 +2,11 @@ package com.template;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import com.template.twilioClass.TwilioProperties;
+//import org.springframework.boot.context.properties.EnableConfigurationProperties;
+//import com.template.twilioClass.TwilioProperties;
 
 //whatsup config property enable
-@EnableConfigurationProperties(TwilioProperties.class)
+//@EnableConfigurationProperties(TwilioProperties.class)
 @SpringBootApplication
 public class TemplateAppApplication {
 

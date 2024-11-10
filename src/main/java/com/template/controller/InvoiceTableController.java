@@ -3,7 +3,6 @@ package com.template.controller;
 import java.io.IOException;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -24,8 +23,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class InvoiceTableController {
 	
-	@Autowired
-	InvoiceTableService  invoiceTableService; 
+	
+	private final InvoiceTableService  invoiceTableService; 
+	
+	public InvoiceTableController(InvoiceTableService  invoiceTableService) {
+		this.invoiceTableService = invoiceTableService;
+	}
 	
 	
 	@PostMapping("/save-invoice")

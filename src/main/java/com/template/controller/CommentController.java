@@ -1,6 +1,5 @@
 package com.template.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,16 +9,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.template.UserCommentDTO.CommentUpdateRequest;
 import com.template.service.CommentService;
+import com.template.userCommentDTO.CommentUpdateRequest;
 
 @RestController
 @CrossOrigin("*")
 public class CommentController {
 	
-
-    @Autowired
-    CommentService commentService;
+    private final CommentService commentService;
+    
+    
+    public CommentController(CommentService commentService) {
+    	this.commentService = commentService;
+    }
     
     
     @GetMapping("/get-comments-by-id/{uid}")

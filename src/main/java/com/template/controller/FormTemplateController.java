@@ -1,7 +1,6 @@
 package com.template.controller;
 
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,19 +10,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.template.model.FormTemplateDTO;
-import com.template.service.CommentService;
 import com.template.service.FormTemplateService;
 
 @RestController
 @CrossOrigin("*")
 public class FormTemplateController {
 
-	@Autowired
-	FormTemplateService formTemplateService;  //user template form autowired.
+	private final FormTemplateService formTemplateService;	
 	
-	@Autowired
-	CommentService commentService;  //user comment autowired.
 	
+	public FormTemplateController(FormTemplateService formTemplateService) {
+		this.formTemplateService = formTemplateService;
+	}
 	
 	
 	@PostMapping("/create-template")
