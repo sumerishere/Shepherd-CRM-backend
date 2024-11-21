@@ -41,7 +41,6 @@ public class FormTemplateService {
 	}
 	
 	
-	
 	@Transactional
     public ResponseEntity<String> saveFormTemplate(FormTemplateDTO formTemplateDTO) {
         // Fetch the user by userName
@@ -72,12 +71,30 @@ public class FormTemplateService {
         if (!existingTemplates.isEmpty()) {
             return new ResponseEntity<>("User already has a template form", HttpStatus.CONFLICT);
         }
+        
+        // Additional validation for dropdowns (optional)
+        if (formTemplateDTO.getDropdowns() != null && !formTemplateDTO.getDropdowns().isEmpty()) {
+            // Validate dropdown information if needed
+            for (FormTemplateDTO.DropdownDTO dropdown : formTemplateDTO.getDropdowns()) {
+                if (dropdown.getDropdownName() == null || dropdown.getDropdownName().isEmpty()) {
+                    return new ResponseEntity<>("Dropdown name is required", HttpStatus.BAD_REQUEST);
+                }
+                if (dropdown.getOptions() == null || dropdown.getOptions().isEmpty()) {
+                    return new ResponseEntity<>("Dropdown options are required", HttpStatus.BAD_REQUEST);
+                }
+            }
+        }
 
         // Create FormTemplate entity
         FormTemplate formTemplate = new FormTemplate();
         formTemplate.setFormName(formTemplateDTO.getFormName());
         formTemplate.setCreatedAt(formTemplateDTO.getCreatedAt());
         formTemplate.setFields(convertListToJsonNode(formTemplateDTO.getFields())); // Convert List<FieldDTO> to JsonNode
+        
+        // Convert dropdowns to JsonNode
+        if (formTemplateDTO.getDropdowns() != null && !formTemplateDTO.getDropdowns().isEmpty()) {
+            formTemplate.setDropdowns(convertDropdownsToJsonNode(formTemplateDTO.getDropdowns()));
+        }
         formTemplate.setUser(user);
         formTemplate.setPassword(userPassword); // Set the user's password
 
@@ -87,11 +104,18 @@ public class FormTemplateService {
 
         return new ResponseEntity<>("Form template saved successfully", HttpStatus.CREATED);
     }
+	
+	// New method to convert dropdowns to JsonNode
+	private JsonNode convertDropdownsToJsonNode(List<FormTemplateDTO.DropdownDTO> dropdownDTOList) {
+	    ObjectMapper mapper = new ObjectMapper();
+	    return mapper.valueToTree(dropdownDTOList);
+	}
 
     private JsonNode convertListToJsonNode(List<FormTemplateDTO.FieldDTO> fieldDTOList) {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.valueToTree(fieldDTOList);
     }
+
 	
     	
 	//-----------------------------------------------------------------------------------------//
@@ -131,7 +155,7 @@ public class FormTemplateService {
 	
     
     
-    public ResponseEntity<?> getTemplateByUsername(String userName ){
+    public ResponseEntity<Object> getTemplateByUsername(String userName ){
     	
     	Optional<User> optionalUserObject = userRepository.findByUserName(userName);
     	try {

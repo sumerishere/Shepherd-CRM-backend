@@ -101,7 +101,7 @@ public class UserService implements ValidationConstant{
 	
 	//--------------------------- user Login (GET) --------------------------------//
 	
-	public ResponseEntity<?> Login(String userName, String password){
+	public ResponseEntity<Object> login(String userName, String password){
 		
 		Optional<User>  user = userRepository.findByUserName(userName);
 		
@@ -114,7 +114,7 @@ public class UserService implements ValidationConstant{
 					return new ResponseEntity<>(userObject, HttpStatus.OK);
 				}
 				else {
-					return new ResponseEntity<>("incorrect!! username and password, Please Try again.." ,HttpStatus.NOT_FOUND );
+					return new ResponseEntity<>("incorrect!! username and password, Please Try again.." ,HttpStatus.BAD_REQUEST);
 				}
 			}
 		}
@@ -132,9 +132,9 @@ public class UserService implements ValidationConstant{
 	
 	//--------------------------- user data (GET API) --------------------------------//
 	
-	public ResponseEntity<?>  getUserData(String username){
+	public ResponseEntity<Object>  getUserData(String username){
 		
-		Optional<User>  user = userRepository.findByUserName(username);
+		Optional<User> user = userRepository.findByUserName(username);
 		
 		try {
 			if(user.isPresent()) {

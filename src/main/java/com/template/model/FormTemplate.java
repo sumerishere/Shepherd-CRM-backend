@@ -35,6 +35,10 @@ public class FormTemplate {
     @Column(columnDefinition = "json", nullable = false)
     private JsonNode fields;
     
+    @Convert(converter = JsonNodeConverter.class)
+    @Column(columnDefinition = "json", nullable = true)
+    private JsonNode dropdowns;
+    
     private String password;
   
     

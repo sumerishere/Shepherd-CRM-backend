@@ -7,15 +7,27 @@ import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+
 public class FormTemplateDTO {
     
     private Long id;
     private String formName;
     private LocalDateTime createdAt;  // Time
     private List<FieldDTO> fields;    // List of field objects
-    private String userName;
+    private String userName;	
+    
+    private List<DropdownDTO> dropdowns;
     
     // Getters and Setters
+    
+    // Add getter and setter for dropdowns
+    public List<DropdownDTO> getDropdowns() {
+        return dropdowns;
+    }
+
+    public void setDropdowns(List<DropdownDTO> dropdowns) {
+        this.dropdowns = dropdowns;
+    }
     
     public String getFormName() {
         return formName;
@@ -72,23 +84,24 @@ public class FormTemplateDTO {
             	
                 Map.Entry<String, JsonNode> fieldEntry = fieldsIterator.next();
                 
-                String columnName = fieldEntry.getKey();
-                String dataType = fieldEntry.getValue().asText();
-
+              String columnName = fieldEntry.getKey();
+              String dataType = fieldEntry.getValue().asText();
+                
                 FieldDTO fieldDTO = new FieldDTO();
                 
                 fieldDTO.setColumnName(columnName);
                 fieldDTO.setDataType(dataType);
                 
                 fieldDTO.setFieldId(fieldId++); 
-                
+                              
                 fieldList.add(fieldDTO);
             }
         }
         return fieldList;
     }
     
-    // Nested FieldDTO class
+    // -------- Nested FieldDTO class -----------------//
+
     public static class FieldDTO {
     	
         private String columnName;
@@ -121,4 +134,31 @@ public class FormTemplateDTO {
             this.fieldId = fieldId;
         }
     }
+    
+    // ---------- New DTO for dropdown ---------- //
+    public static class DropdownDTO {
+    	
+        private String dropdownName;
+        private List<String> options;
+
+        // Getters and setters
+        public String getDropdownName() {
+            return dropdownName;
+        }
+
+        public void setDropdownName(String dropdownName) {
+            this.dropdownName = dropdownName;
+        }
+
+        public List<String> getOptions() {
+            return options;
+        }
+
+        public void setOptions(List<String> options) {
+            this.options = options;
+        }
+    }
+    
+    
+    
 }

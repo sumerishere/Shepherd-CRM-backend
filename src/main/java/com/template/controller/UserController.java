@@ -40,13 +40,13 @@ public class UserController {
 	
 	
 	@GetMapping("/login")
-	public ResponseEntity<?> userLogin(@RequestParam("username") String userName, @RequestParam("password") String password){
+	public ResponseEntity<Object> userLogin(@RequestParam("username") String userName, @RequestParam("password") String password){
 		log.info("user login succesfully!!!");
-		return userService.Login(userName, password);
+		return userService.login(userName, password);
 	}
 	
 	@GetMapping("/get-user-data")
-	public ResponseEntity<?> getUserData(@RequestParam("username") String username){
+	public ResponseEntity<Object> getUserData(@RequestParam("username") String username){
 		return userService.getUserData(username);
 	}
 	

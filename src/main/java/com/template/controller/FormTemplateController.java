@@ -37,7 +37,7 @@ public class FormTemplateController {
 	//---- get template by username ----//
 	
 	@GetMapping("/get-template-username")
-	public ResponseEntity<?> getTemplateByUsername(@RequestParam("userName") String userName){
+	public ResponseEntity<Object> getTemplateByUsername(@RequestParam("userName") String userName){
 		return formTemplateService.getTemplateByUsername(userName);
 	}
 	

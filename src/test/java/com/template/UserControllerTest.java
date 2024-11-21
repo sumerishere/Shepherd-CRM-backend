@@ -101,16 +101,18 @@ class UserControllerTests {
     void getAllUsers_shouldReturnListOfUsers() throws Exception {
         // Arrange
         List<User> users = Arrays.asList(user1, user2, user3);
+        
         when(userService.getAllUsers()).thenReturn(users);
 
         // Act & Assert
         mockMvc.perform(get("/get-all-user")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))          
                 .andExpect(jsonPath("$[0].fullName").value(user1.getFullName()))
                 .andExpect(jsonPath("$[0].email").value(user1.getEmail()))
                 .andExpect(jsonPath("$[1].fullName").value(user2.getFullName()))
+                .andExpect(jsonPath("$[1].email").value(user2.getEmail()))
                 .andExpect(jsonPath("$[2].fullName").value(user3.getFullName()));
     }
 
@@ -152,6 +154,7 @@ class UserControllerTests {
     
     @Test
     void saveUser_shouldHandleDuplicateUsername() throws Exception {
+    	
         // Arrange
         String userJson = objectMapper.writeValueAsString(user1);
         MockMultipartFile userPart = new MockMultipartFile(
@@ -173,6 +176,7 @@ class UserControllerTests {
             "Username is already present, try another username", 
             HttpStatus.BAD_REQUEST
         );
+        
         when(userService.saveUserInfo(any(User.class), any(MultipartFile.class)))
             .thenReturn(response);
 
@@ -191,6 +195,7 @@ class UserControllerTests {
     void saveUser_shouldHandleValidationError() throws Exception {
         // Arrange
         String userJson = objectMapper.writeValueAsString(user1);
+        
         MockMultipartFile userPart = new MockMultipartFile(
             "user",
             null,
@@ -210,6 +215,7 @@ class UserControllerTests {
             "Validation error message", 
             HttpStatus.BAD_REQUEST
         );
+        
         when(userService.saveUserInfo(any(User.class), any(MultipartFile.class)))
             .thenReturn(response);
 
