@@ -98,4 +98,12 @@ public class InvoiceTableController {
         return invoiceTableService.getAllCandidates();
     }
 	
+	
+	@GetMapping("/search-invoice")
+	public ResponseEntity<List<?>> searchByMobile(@RequestParam("mobileNumber") String candidateMobile){
+		log.info("cadidate mobile number :{}",candidateMobile);
+		return invoiceTableService.searchByMobile(candidateMobile);
+	}
+	
+	
 }

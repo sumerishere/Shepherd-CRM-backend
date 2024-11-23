@@ -4,6 +4,7 @@ package com.template.service;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -169,6 +170,24 @@ public class InvoiceTableService {
 	        return dto;
 	        
 	    }).collect(Collectors.toList());
+	}
+	
+	//-----------------------------------------------------------------------------------------//
+
+	
+
+	//-------------------------------Search user invoice by Mobile (GET API) -----------------------------------------//
+
+	public ResponseEntity<List<?>> searchByMobile(String candidateMobile) {
+		
+		if(candidateMobile != null && !candidateMobile.isEmpty()) {
+			log.info("searched invoice by mobile number",candidateMobile);
+			return new ResponseEntity<>(invoiceTableRepository.searchInvoiceByMobile(candidateMobile), HttpStatus.OK);
+			
+		}else {
+			log.info("-----> invoice not found... <----");
+	        return new ResponseEntity<>(Collections.emptyList(), HttpStatus.OK);
+		}
 	}
 	
 	//-----------------------------------------------------------------------------------------//
