@@ -13,7 +13,10 @@ import com.template.model.InvoiceTable;
 @Repository
 public interface InvoiceTableRepository extends JpaRepository<InvoiceTable, Long>{
 	
-	@Query("SELECT user from InvoiceTable user where user.candidateMobile LIKE CONCAT('%',:mobileNumber,'%')")
+	@Query("SELECT new com.template.invoiceDTO.InvoiceTableDTO(user.id, user.candidateName, user.candidateMobile, user.candidateMail, user.organizationName, user.invoiceCreatedAt) " 
+			+ "FROM InvoiceTable user WHERE user.candidateMobile LIKE CONCAT('%', :mobileNumber, '%')")
 	List<InvoiceTableDTO> searchInvoiceByMobile(@Param("mobileNumber") String candidateMobile);
-
+	
+//	@Query("SELECT user from InvoiceTable user where user.candidateMobile LIKE CONCAT('%',:mobileNumber,'%')")
+//	List<InvoiceTable> searchInvoiceByMobile(@Param("mobileNumber") String candidateMobile);
 }

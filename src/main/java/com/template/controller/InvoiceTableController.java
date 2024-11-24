@@ -92,7 +92,6 @@ public class InvoiceTableController {
 	}
 	
 	
-	
 	@GetMapping("/get-all-candidate")
     public List<InvoiceTableDTO> getAllCandidates() {
         return invoiceTableService.getAllCandidates();
@@ -100,7 +99,7 @@ public class InvoiceTableController {
 	
 	
 	@GetMapping("/search-invoice")
-	public ResponseEntity<List<?>> searchByMobile(@RequestParam("mobileNumber") String candidateMobile){
+	public ResponseEntity<List<InvoiceTableDTO>> searchByMobile(@RequestParam("mobileNumber") String candidateMobile){
 		log.info("cadidate mobile number :{}",candidateMobile);
 		return invoiceTableService.searchByMobile(candidateMobile);
 	}

@@ -174,17 +174,19 @@ public class InvoiceTableService {
 	
 	//-----------------------------------------------------------------------------------------//
 
-	
 
-	//-------------------------------Search user invoice by Mobile (GET API) -----------------------------------------//
+	//-------------------------------Search user invoice by mobileNumber (GET API) -----------------------------------------//
 
-	public ResponseEntity<List<?>> searchByMobile(String candidateMobile) {
+	public ResponseEntity<List<InvoiceTableDTO>> searchByMobile(String candidateMobile) {
 		
 		if(candidateMobile != null && !candidateMobile.isEmpty()) {
-			log.info("searched invoice by mobile number",candidateMobile);
-			return new ResponseEntity<>(invoiceTableRepository.searchInvoiceByMobile(candidateMobile), HttpStatus.OK);
 			
-		}else {
+			log.info("searched invoice by mobile number",candidateMobile);
+		    List<InvoiceTableDTO> invoices = invoiceTableRepository.searchInvoiceByMobile(candidateMobile);
+		    return new ResponseEntity<>(invoices, HttpStatus.OK);		
+		}
+		else {
+			
 			log.info("-----> invoice not found... <----");
 	        return new ResponseEntity<>(Collections.emptyList(), HttpStatus.OK);
 		}
