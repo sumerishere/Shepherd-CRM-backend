@@ -19,10 +19,14 @@ import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 public class LeadFollowUp {
 
 	@Id
@@ -55,6 +59,5 @@ public class LeadFollowUp {
 	@OneToMany(mappedBy = "leadFollowUp", cascade = CascadeType.ALL, orphanRemoval = true)
 	@JsonManagedReference  //tell jackson to perform serialization mechanism on this entity and skip child serialization to avoid stackoverflow error and infinite recursion error.
 	private List<Comment> comments = new ArrayList<>();
-	
 	
 }

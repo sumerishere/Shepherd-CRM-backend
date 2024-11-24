@@ -1,6 +1,9 @@
 package com.template.controller;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.template.ApiResponseClass.ApiResponse;
 import com.template.globalException.LeadNotFoundException;
@@ -77,6 +81,38 @@ public class LeadFollowUpController {
 	
 	
 	
+	@PostMapping("/add-bulk-lead")
+    public ResponseEntity<Map<String, Object>> uploadExcelFile(@RequestParam("file") MultipartFile file) {
+		
+        try {
+            if (!isExcelFile(file)) {
+                return ResponseEntity.badRequest()
+                    .body(Collections.singletonMap("error", "Please upload an Excel file (xlsx or xls)"));
+            }
+
+            List<LeadFollowUp> savedLeads = leadFollowUpService.processExcelFile(file);
+            Map<String, Object> response = new HashMap<>();
+            response.put("message", "File uploaded successfully");
+            response.put("recordsProcessed", savedLeads.size());
+            
+            return ResponseEntity.ok(response);
+        } 
+        catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Collections.singletonMap("error", "Error processing file: " + e.getMessage()));
+        }
+    }
+
+    private boolean isExcelFile(MultipartFile file) {
+        String contentType = file.getContentType();
+        return contentType != null && (
+            contentType.equals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") || // xlsx
+            contentType.equals("application/vnd.ms-excel") // xls
+        );
+    }
+
+
+
 	@GetMapping("/get-lead-by-id/{uid}")
 	public ResponseEntity<?> getLead(@PathVariable("uid") Long uid){
 		return leadFollowUpService.getLead(uid);
@@ -115,8 +151,6 @@ public class LeadFollowUpController {
                 .body(new ApiResponse("An unexpected error occurred while updating the lead", HttpStatus.INTERNAL_SERVER_ERROR));
         }
     }
-	
-		
 	
 	
 	@PutMapping("/update-followup/{uid}")

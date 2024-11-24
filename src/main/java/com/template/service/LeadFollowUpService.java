@@ -6,15 +6,25 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.template.ApiResponseClass.ApiResponse;
 import com.template.model.Comment;
@@ -145,9 +155,121 @@ public class LeadFollowUpService implements ValidationConstant {
 	
 	//--------------------------------------------------------------------------------------------//
 	
+	 
+	 
+	 
+    //----------------------------------- add bulk lead by xle file (POST API) ----------------------//
+	 
+	 public List<LeadFollowUp> processExcelFile(MultipartFile file) throws IOException {
+		 
+        List<LeadFollowUp> leads = new ArrayList<>();
+        
+        try (Workbook workbook = WorkbookFactory.create(file.getInputStream())) {
+        	
+            Sheet sheet = workbook.getSheetAt(0);
+            Row headerRow = sheet.getRow(0);
+            Map<String, Integer> columnMapping = createColumnMapping(headerRow);
+            
+            // Start from row 1 as row 0 is header
+            for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+            	
+                Row currentRow = sheet.getRow(i);
+                if (currentRow == null) continue;
+                
+                LeadFollowUp lead = createLeadFromRow(currentRow, columnMapping);
+                if (isValidLead(lead)) {
+                    leads.add(lead);
+                }
+            }
+        }
+        
+        return leadFollowUpRepository.saveAll(leads);
+    }
+
+    private Map<String, Integer> createColumnMapping(Row headerRow) {
+    	
+        Map<String, Integer> columnMapping = new HashMap<>();
+        
+        for (int i = 0; i < headerRow.getLastCellNum(); i++) {
+        	
+            Cell cell = headerRow.getCell(i);
+            
+            if (cell != null) {
+                columnMapping.put(cell.getStringCellValue().toLowerCase().trim(), i);
+            }
+        }
+        return columnMapping;
+    }
+
+    private LeadFollowUp createLeadFromRow(Row row, Map<String, Integer> columnMapping) {
+        LeadFollowUp lead = new LeadFollowUp();
+        
+        // Set each field based on the column mapping
+        setCellValue(lead::setName, row, columnMapping.get("name"));
+        setCellValue(lead::setEmail, row, columnMapping.get("email"));
+        setCellValue(lead::setMobileNumber, row, columnMapping.get("mobile_number"));
+        setCellValue(lead::setAddress, row, columnMapping.get("address"));
+        setCellValue(lead::setCourseType, row, columnMapping.get("course_type"));
+        setCellValue(lead::setSource, row, columnMapping.get("source"));
+        setCellValue(lead::setReferName, row, columnMapping.get("refer_name"));
+        setCellValue(lead::setQualification, row, columnMapping.get("qualification"));
+        setCellValue(lead::setCategory, row, columnMapping.get("category"));
+        setCellValue(lead::setFollowUpDate, row, columnMapping.get("follow_up_date"));
+        setCellValue(lead::setAssignTo, row, columnMapping.get("assign_to"));
+        setCellValue(lead::setStatusType, row, columnMapping.get("status_type"));
+        
+        // Set creation timestamp
+        lead.setCreatedAt(LocalDateTime.now().toString());
+        
+        return lead;
+    }
+
+    private void setCellValue(Consumer<String> setter, Row row, Integer columnIndex) {
+    	
+        if (columnIndex != null) {
+        	
+            Cell cell = row.getCell(columnIndex);
+            
+            if (cell != null) {
+                setter.accept(getCellValueAsString(cell));
+            }
+        }
+    }
+
+    private String getCellValueAsString(Cell cell) {
+    	
+        switch (cell.getCellType()) {
+        
+            case STRING:
+                return cell.getStringCellValue();
+                
+            case NUMERIC:
+                if (DateUtil.isCellDateFormatted(cell)) {
+                    return cell.getLocalDateTimeCellValue().toString();
+                }
+                return String.valueOf(cell.getNumericCellValue());
+                
+            case BOOLEAN:
+                return String.valueOf(cell.getBooleanCellValue());
+                
+            default:
+                return "";
+        }
+    }
+
+    private boolean isValidLead(LeadFollowUp lead) {
+        // Add validation logic based on @NotNull and other constraints
+        return lead.getName() != null && 
+               lead.getName().length() >= 2 && 
+               lead.getName().length() <= 100 &&
+               lead.getEmail() != null &&
+               lead.getMobileNumber() != null;
+    }
+
 	
-	
-	
+    //--------------------------------------------------------------------------------------------//
+	 
+	 
 	
 	//----------------------------- get lead info ( GET API ) --------------------------------------//
 	
