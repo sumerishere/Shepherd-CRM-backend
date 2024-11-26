@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.template.ApiResponseClass.ApiResponse;
+import com.template.globalException.DuplicateLeadException;
 import com.template.globalException.LeadNotFoundException;
 import com.template.model.LeadFollowUp;
 import com.template.repository.LeadFollowUpRepository;
@@ -82,7 +83,7 @@ public class LeadFollowUpController {
 	
 	
 	@PostMapping("/add-bulk-lead")
-    public ResponseEntity<Map<String, Object>> uploadExcelFile(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<Map<String, Object>> addBulkLeadFile(@RequestParam("file-xle") MultipartFile file) {
 		
         try {
             if (!isExcelFile(file)) {
@@ -90,14 +91,19 @@ public class LeadFollowUpController {
                     .body(Collections.singletonMap("error", "Please upload an Excel file (xlsx or xls)"));
             }
 
-            List<LeadFollowUp> savedLeads = leadFollowUpService.processExcelFile(file);
+            List<LeadFollowUp> savedLeads = leadFollowUpService.addBulkLead(file);
             Map<String, Object> response = new HashMap<>();
+            
             response.put("message", "File uploaded successfully");
             response.put("recordsProcessed", savedLeads.size());
             
             return ResponseEntity.ok(response);
-        } 
-        catch (Exception e) {
+            
+        } catch (DuplicateLeadException e) {
+            return ResponseEntity.badRequest()
+                .body(Collections.singletonMap("error", e.getMessage()));
+            
+        }catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Collections.singletonMap("error", "Error processing file: " + e.getMessage()));
         }

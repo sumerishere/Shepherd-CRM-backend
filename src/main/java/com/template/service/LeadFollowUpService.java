@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.template.ApiResponseClass.ApiResponse;
+import com.template.globalException.DuplicateLeadException;
 import com.template.model.Comment;
 import com.template.model.LeadFollowUp;
 import com.template.repository.CommentRepository;
@@ -158,11 +159,12 @@ public class LeadFollowUpService implements ValidationConstant {
 	 
 	 
 	 
-    //----------------------------------- add bulk lead by xle file (POST API) ----------------------//
+    //------------------ add bulk lead by xle file (POST API) --------------------------//
 	 
-	 public List<LeadFollowUp> processExcelFile(MultipartFile file) throws IOException {
+	 public List<LeadFollowUp> addBulkLead(MultipartFile file) throws IOException {
 		 
         List<LeadFollowUp> leads = new ArrayList<>();
+        List<String> duplicateEmails = new ArrayList<>();
         
         try (Workbook workbook = WorkbookFactory.create(file.getInputStream())) {
         	
@@ -177,10 +179,20 @@ public class LeadFollowUpService implements ValidationConstant {
                 if (currentRow == null) continue;
                 
                 LeadFollowUp lead = createLeadFromRow(currentRow, columnMapping);
+                
                 if (isValidLead(lead)) {
-                    leads.add(lead);
+                	if(isDuplicateLead(lead)){
+                		duplicateEmails.add(lead.getEmail());
+                	}
+                    else {
+                    	leads.add(lead);
+                    }
                 }
             }
+        }
+        if (!duplicateEmails.isEmpty()) {
+        	log.info("------- > duplicate lead found!!!! <-----------");
+            throw new DuplicateLeadException("Duplicate!!! leads found for emails: " + String.join(", ", duplicateEmails));
         }
         
         return leadFollowUpRepository.saveAll(leads);
@@ -256,8 +268,14 @@ public class LeadFollowUpService implements ValidationConstant {
                 return "";
         }
     }
-
+    
+    private boolean isDuplicateLead(LeadFollowUp lead) {
+    	Optional<LeadFollowUp> existLead = leadFollowUpRepository.findByEmail(lead.getEmail());
+    	return existLead.isPresent();
+    }
+    
     private boolean isValidLead(LeadFollowUp lead) {
+       			
         // Add validation logic based on @NotNull and other constraints
         return lead.getName() != null && 
                lead.getName().length() >= 2 && 
